@@ -27,4 +27,4 @@ To load or download an image, simply point the imageURL property at the desired 
 
 If you want to display a placeholder image in the meantime, just manually set the image property to your placeholder image and it will be overwritten once the image specified by the URL has loaded.
 
-To detect when the image has finished loading, you can use KVO (Key Value Coding) to set up an observer on the image property. When the image has finished loading, the image will be set, and with KVO you can detect this and react accordingly.
+To detect when the image has finished loading, you can use KVO (Key-Value Observation) to set up an observer on the image property. When the image has finished loading, the image will be set, and with KVO you can detect this and react accordingly.
