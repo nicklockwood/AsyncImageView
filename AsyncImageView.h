@@ -1,6 +1,8 @@
 //
 //  AsyncImageView.h
 //
+//  Version 1.1
+//
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright 2010 Charcoal Design. All rights reserved.
 //
@@ -31,7 +33,41 @@
 #import <UIKit/UIKit.h>
 
 
-@interface AsyncImageView : UIImageView
+extern NSString *const AsyncImageLoadDidFinish;
+extern NSString *const AsyncImageLoadDidFail;
+
+
+@interface AsyncImageCache : NSObject
+
++ (AsyncImageCache *)sharedCache;
+
+- (UIImage *)imageForURL:(NSURL *)URL;
+- (void)setImage:(UIImage *)image forURL:(NSURL *)URL;
+- (void)removeImageForURL:(NSURL *)URL;
+- (void)clearCache;
+
+@end
+
+
+@interface AsyncImageLoader : NSObject
+
++ (AsyncImageLoader *)sharedLoader;
+
+@property (nonatomic, assign) NSUInteger concurrentLoads;
+@property (nonatomic, assign) NSTimeInterval loadingTimeout;
+
+- (void)loadImageWithURL:(NSURL *)URL target:(id)target success:(SEL)success failure:(SEL)failure;
+- (void)loadImageWithURL:(NSURL *)URL target:(id)target action:(SEL)action;
+- (void)loadImageWithURL:(NSURL *)URL;
+- (void)cancelLoadingURL:(NSURL *)URL target:(id)target action:(SEL)action;
+- (void)cancelLoadingURL:(NSURL *)URL target:(id)target;
+- (void)cancelLoadingURL:(NSURL *)URL;
+- (NSURL *)URLForTarget:(id)target action:(SEL)action;
+
+@end
+
+
+@interface UIImageView(AsyncImageView)
 
 @property (nonatomic, retain) NSURL *imageURL;
 
