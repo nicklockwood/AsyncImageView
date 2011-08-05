@@ -74,7 +74,8 @@
 
 - (void)setImage:(UIImage *)image forURL:(NSURL *)URL
 {
-    [cache setObject:image forKey:URL];
+    if (image != nil)
+        [cache setObject:image forKey:URL];
 }
 
 - (void)removeImageForURL:(NSURL *)URL
@@ -364,7 +365,8 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
             
             //perform action
             UIImage *image = [[AsyncImageCache sharedCache] imageForURL:URL];
-            [connection.target performSelector:connection.success withObject:image withObject:URL];
+            if (image != nil)
+                [connection.target performSelector:connection.success withObject:image withObject:URL];
             
             //remove from queue
             [connections removeObjectAtIndex:i];
@@ -478,6 +480,19 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
     }
 }
 
+- (void)cancelLoadingURLForTarget:(id)target
+{
+    for (int i = [connections count] - 1; i >= 0; i--)
+    {
+        AsyncImageConnection *connection = [connections objectAtIndex:i];
+        if (connection.target == target)
+        {
+            [connection cancel];
+            [connections removeObjectAtIndex:i];
+        }
+    }
+}
+
 - (NSURL *)URLForTarget:(id)target action:(SEL)action
 {
     //return the most recent image URL assigned to the target
@@ -507,6 +522,7 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
 
 - (void)setImageURL:(NSURL *)imageURL
 {
+    [[AsyncImageLoader sharedLoader] cancelLoadingURLForTarget:self];
 	[[AsyncImageLoader sharedLoader] loadImageWithURL:imageURL target:self action:@selector(setImage:)];
 }
 
