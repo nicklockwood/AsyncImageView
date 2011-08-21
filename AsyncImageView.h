@@ -9,7 +9,7 @@
 //  Get the latest version of AsyncImageView from either of these locations:
 //
 //  http://charcoaldesign.co.uk/source/cocoa#asyncimageview
-//  https://github.com/demosthenese/AsyncImageView
+//  https://github.com/nicklockwood/AsyncImageView
 //
 //  This software is provided 'as-is', without any express or implied
 //  warranty.  In no event will the authors be held liable for any damages
