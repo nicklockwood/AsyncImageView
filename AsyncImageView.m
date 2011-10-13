@@ -1,7 +1,7 @@
 //
 //  AsyncImageView.m
 //
-//  Version 1.1
+//  Version 1.2
 //
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright 2011 Charcoal Design. All rights reserved.
@@ -33,6 +33,16 @@
 #import "AsyncImageView.h"
 
 
+NSString *const AsyncImageLoadDidFinish = @"AsyncImageLoadDidFinish";
+NSString *const AsyncImageLoadDidFail = @"AsyncImageLoadDidFail";
+NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
+
+NSString *const AsyncImageImageKey = @"image";
+NSString *const AsyncImageURLKey = @"URL";
+NSString *const AsyncImageCacheKey = @"cache";
+NSString *const AsyncImageErrorKey = @"error";
+
+
 @interface AsyncImageCache ()
 
 @property (nonatomic, retain) NSMutableDictionary *cache;
@@ -43,6 +53,7 @@
 @implementation AsyncImageCache
 
 @synthesize cache;
+@synthesize useImageNamed;
 
 + (AsyncImageCache *)sharedCache
 {
@@ -58,6 +69,7 @@
 {
     if ((self = [super init]))
     {
+		useImageNamed = YES;
         cache = [[NSMutableDictionary alloc] init];
         [[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(clearCache)
@@ -69,11 +81,31 @@
 
 - (UIImage *)imageForURL:(NSURL *)URL
 {
+	if (useImageNamed && [URL isFileURL])
+	{
+		NSString *path = [URL path];
+		NSString *imageName = [path lastPathComponent];
+		NSString *directory = [path stringByDeletingLastPathComponent];
+		if ([[[NSBundle mainBundle] resourcePath] isEqualToString:directory])
+		{
+			return [UIImage imageNamed:imageName];
+		}
+	}
     return [cache objectForKey:URL];
 }
 
 - (void)setImage:(UIImage *)image forURL:(NSURL *)URL
 {
+    if (useImageNamed && [URL isFileURL])
+    {
+        NSString *path = [URL path];
+        NSString *directory = [path stringByDeletingLastPathComponent];
+        if ([[[NSBundle mainBundle] resourcePath] isEqualToString:directory])
+        {
+            //do not store in cache
+            return;
+        }
+    }
     [cache setObject:image forKey:URL];
 }
 
@@ -105,22 +137,30 @@
 @end
 
 
-NSString *const AsyncImageLoadDidFinish = @"AsyncImageLoadDidFinish";
-NSString *const AsyncImageLoadDidFail = @"AsyncImageLoadDidFail";
-NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
-
-
 @interface AsyncImageConnection : NSObject
 
 @property (nonatomic, retain) NSURLConnection *connection;
 @property (nonatomic, retain) NSMutableData *data;
 @property (nonatomic, retain) NSURL *URL;
+@property (nonatomic, retain) AsyncImageCache *cache;
 @property (nonatomic, retain) id target;
 @property (nonatomic, assign) SEL success;
 @property (nonatomic, assign) SEL failure;
+@property (nonatomic, assign) BOOL decompressImage;
 
-+ (AsyncImageConnection *)connectionWithURL:(NSURL *)URL target:(id)target success:(SEL)success failure:(SEL)failure;
-- (AsyncImageConnection *)initWithURL:(NSURL *)URL target:(id)target success:(SEL)success failure:(SEL)failure;
++ (AsyncImageConnection *)connectionWithURL:(NSURL *)URL
+                                      cache:(AsyncImageCache *)cache
+									 target:(id)target
+									success:(SEL)success
+									failure:(SEL)failure
+							decompressImage:(BOOL)decompressImage;
+
+- (AsyncImageConnection *)initWithURL:(NSURL *)URL
+                                cache:(AsyncImageCache *)cache
+							   target:(id)target
+							  success:(SEL)success
+							  failure:(SEL)failure
+					  decompressImage:(BOOL)decompressImage;
 
 - (BOOL)isLoading;
 - (void)start;
@@ -134,37 +174,82 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
 @synthesize connection;
 @synthesize data;
 @synthesize URL;
+@synthesize cache;
 @synthesize target;
 @synthesize success;
 @synthesize failure;
+@synthesize decompressImage;
 
-+ (AsyncImageConnection *)connectionWithURL:(NSURL *)URL target:(id)target success:(SEL)_success failure:(SEL)_failure
++ (AsyncImageConnection *)connectionWithURL:(NSURL *)URL
+                                      cache:(AsyncImageCache *)_cache
+									 target:(id)target
+									success:(SEL)_success
+									failure:(SEL)_failure
+							decompressImage:(BOOL)_decompressImage
 {
-    return [[[self alloc] initWithURL:URL target:target success:_success failure:_failure] autorelease];
+    return [[[self alloc] initWithURL:URL
+                                cache:_cache
+							   target:target
+							  success:_success
+							  failure:_failure
+					  decompressImage:_decompressImage] autorelease];
 }
 
-- (AsyncImageConnection *)initWithURL:(NSURL *)_URL target:(id)_target success:(SEL)_success failure:(SEL)_failure
+- (AsyncImageConnection *)initWithURL:(NSURL *)_URL
+                                cache:(AsyncImageCache *)_cache
+							   target:(id)_target
+							  success:(SEL)_success
+							  failure:(SEL)_failure
+					  decompressImage:(BOOL)_decompressImage
 {
     if ((self = [self init]))
     {
         self.URL = _URL;
+        self.cache = _cache;
         self.target = _target;
         self.success = _success;
         self.failure = _failure;
+		self.decompressImage = _decompressImage;
     }
     return self;
 }
 
 - (void)cacheImage:(UIImage *)image
 {
-    [[AsyncImageCache sharedCache] setImage:image forURL:URL];
-    [[NSNotificationCenter defaultCenter] postNotificationName:AsyncImageLoadDidFinish object:URL];
+    [cache setImage:image forURL:URL];
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                     image, AsyncImageImageKey,
+                                     URL, AsyncImageURLKey,
+                                     nil];
+    if (cache)
+    {
+        [userInfo setObject:cache forKey:AsyncImageCacheKey];
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:AsyncImageLoadDidFinish
+                                                        object:target
+                                                      userInfo:[[userInfo copy] autorelease]];
 }
 
-- (void)processData:(NSData *)_data
+- (void)decompressImageInBackground:(UIImage *)image
+{
+	if (decompressImage)
+	{
+		//force image decompression
+		UIGraphicsBeginImageContext(CGSizeMake(1, 1));
+		[image drawAtPoint:CGPointZero];
+		UIGraphicsEndImageContext();
+	}
+	
+	//add to cache (may be cached already but it doesn't matter)
+	[self performSelectorOnMainThread:@selector(cacheImage:) withObject:image waitUntilDone:YES];
+}
+
+- (void)processDataInBackground:(NSData *)_data
 {
     UIImage *image = [[UIImage alloc] initWithData:_data];
-    [self performSelectorOnMainThread:@selector(cacheImage:) withObject:image waitUntilDone:YES];
+    [self decompressImageInBackground:image];
     [image release];
 }
 
@@ -184,10 +269,11 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
     }
     
     //check for cached image
-    if ([[AsyncImageCache sharedCache] imageForURL:URL])
+	UIImage *image = [cache imageForURL:URL];
+    if (image)
     {
         [self cancel];
-        [[NSNotificationCenter defaultCenter] postNotificationName:AsyncImageLoadDidFinish object:URL];
+        [self performSelectorInBackground:@selector(decompressImageInBackground:) withObject:image];
         return;
     }
     
@@ -197,7 +283,7 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    [self performSelectorInBackground:@selector(processData:) withObject:data];
+    [self performSelectorInBackground:@selector(processDataInBackground:) withObject:data];
     self.connection = nil;
     self.data = nil;
 }
@@ -206,10 +292,13 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
 {
     self.connection = nil;
     self.data = nil;
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:@"error"];
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:AsyncImageLoadDidFail
-                                                        object:URL
-                                                      userInfo:userInfo];
+                                                        object:target
+                                                      userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                URL, AsyncImageURLKey,
+                                                                error, AsyncImageErrorKey,
+                                                                nil]];
 }
 
 - (BOOL)isLoading
@@ -233,9 +322,10 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
     }
     
     //check for cached image
-    if ([[AsyncImageCache sharedCache] imageForURL:URL])
+	UIImage *image = [cache imageForURL:URL];
+    if (image)
     {
-        [[NSNotificationCenter defaultCenter] postNotificationName:AsyncImageLoadDidFinish object:URL];
+        [self performSelectorInBackground:@selector(decompressImageInBackground:) withObject:image];
         return;
     }
     
@@ -277,9 +367,11 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
 
 @implementation AsyncImageLoader
 
+@synthesize cache;
 @synthesize connections;
 @synthesize concurrentLoads;
 @synthesize loadingTimeout;
+@synthesize decompressImages;
 
 + (AsyncImageLoader *)sharedLoader
 {
@@ -295,8 +387,10 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
 {
 	if ((self = [super init]))
 	{
+        cache = [[AsyncImageCache sharedCache] retain];
         concurrentLoads = 2;
         loadingTimeout = 60;
+		decompressImages = YES;
 		connections = [[NSMutableArray alloc] init];
         [[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(imageLoaded:)
@@ -338,9 +432,9 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
 }
 
 - (void)imageLoaded:(NSNotification *)notification
-{
+{  
     //complete connections for URL
-    NSURL *URL = [notification object];
+    NSURL *URL = [notification.userInfo objectForKey:AsyncImageURLKey];
     for (int i = [connections count] - 1; i >= 0; i--)
     {
         AsyncImageConnection *connection = [connections objectAtIndex:i];
@@ -363,9 +457,9 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
             [connection cancel];
             
             //perform action
-            UIImage *image = [[AsyncImageCache sharedCache] imageForURL:URL];
-            [connection.target performSelector:connection.success withObject:image withObject:URL];
-            
+			UIImage *image = [notification.userInfo objectForKey:AsyncImageImageKey];
+			[connection.target performSelector:connection.success withObject:image withObject:connection.URL];
+
             //remove from queue
             [connections removeObjectAtIndex:i];
         }
@@ -378,7 +472,7 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
 - (void)imageFailed:(NSNotification *)notification
 {
     //remove connections for URL
-    NSURL *URL = [notification object];
+    NSURL *URL = [notification.userInfo objectForKey:AsyncImageURLKey];
     for (int i = [connections count] - 1; i >= 0; i--)
     {
         AsyncImageConnection *connection = [connections objectAtIndex:i];
@@ -390,7 +484,7 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
             //perform failure action
             if (connection.failure)
             {
-                NSError *error = [[notification userInfo] objectForKey:@"error"];
+                NSError *error = [notification.userInfo objectForKey:AsyncImageErrorKey];
                 [connection.target performSelector:connection.failure withObject:error withObject:URL];
             }
             
@@ -425,7 +519,12 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
 - (void)loadImageWithURL:(NSURL *)URL target:(id)target success:(SEL)success failure:(SEL)failure
 {
     //create new connection
-    [connections addObject:[AsyncImageConnection connectionWithURL:URL target:target success:success failure:failure]];
+    [connections addObject:[AsyncImageConnection connectionWithURL:URL
+                                                             cache:cache
+															target:target
+														   success:success
+														   failure:failure
+												   decompressImage:decompressImages]];
     [self updateQueue];
 }
 
@@ -496,6 +595,7 @@ NSString *const AsyncImageTargetReleased = @"AsyncImageTargetReleased";
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    [cache release];
 	[connections release];
 	[super dealloc];
 }
