@@ -1,7 +1,7 @@
 //
 //  AsyncImageView.m
 //
-//  Version 1.2
+//  Version 1.2.1
 //
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright 2011 Charcoal Design. All rights reserved.
@@ -214,6 +214,16 @@ NSString *const AsyncImageErrorKey = @"error";
     return self;
 }
 
+- (void)loadFailedWithError:(NSError *)error
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:AsyncImageLoadDidFail
+                                                        object:target
+                                                      userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                URL, AsyncImageURLKey,
+                                                                error, AsyncImageErrorKey,
+                                                                nil]];
+}
+
 - (void)cacheImage:(UIImage *)image
 {
     [cache setImage:image forURL:URL];
@@ -249,8 +259,18 @@ NSString *const AsyncImageErrorKey = @"error";
 - (void)processDataInBackground:(NSData *)_data
 {
     UIImage *image = [[UIImage alloc] initWithData:_data];
-    [self decompressImageInBackground:image];
-    [image release];
+    if (image)
+    {
+        [self decompressImageInBackground:image];
+        [image release];
+    }
+    else
+    {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        NSError *error = [NSError errorWithDomain:@"AsyncImageLoader" code:0 userInfo:[NSDictionary dictionaryWithObject:@"Invalid image data" forKey:NSLocalizedDescriptionKey]];
+        [self performSelectorOnMainThread:@selector(loadFailedWithError:) withObject:error waitUntilDone:YES];
+        [pool drain];
+    }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
@@ -292,13 +312,7 @@ NSString *const AsyncImageErrorKey = @"error";
 {
     self.connection = nil;
     self.data = nil;
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:AsyncImageLoadDidFail
-                                                        object:target
-                                                      userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                URL, AsyncImageURLKey,
-                                                                error, AsyncImageErrorKey,
-                                                                nil]];
+    [self loadFailedWithError:error];
 }
 
 - (BOOL)isLoading

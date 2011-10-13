@@ -1,3 +1,7 @@
+Version 1.2.1
+
+- Fixed crash when attempting to load a corrupt image, or a URL that isn't a valid image file.
+
 Version 1.2
 
 - Images are now automatically decompressed on a background thread after loading before being displayed. This reduces stuttering when displaying the images in a scrolling view such as a UITableView or carousel.

@@ -1,7 +1,7 @@
 //
 //  AsyncImageView.h
 //
-//  Version 1.2
+//  Version 1.2.1
 //
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright 2010 Charcoal Design. All rights reserved.
