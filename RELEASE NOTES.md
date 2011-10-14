@@ -1,3 +1,8 @@
+Version 1.2.2
+
+- Fixed crash when accessing imageURL that has already been released.
+- Fixed some thread concurrency issues
+
 Version 1.2.1
 
 - Fixed crash when attempting to load a corrupt image, or a URL that isn't a valid image file.
