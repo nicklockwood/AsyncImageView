@@ -1,7 +1,7 @@
 //
 //  AsyncImageView.m
 //
-//  Version 1.2.2
+//  Version 1.2.3
 //
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright 2011 Charcoal Design. All rights reserved.
@@ -166,6 +166,7 @@ NSString *const AsyncImageErrorKey = @"error";
 
 - (void)start;
 - (void)cancel;
+- (BOOL)isInCache;
 
 @end
 
@@ -218,6 +219,11 @@ NSString *const AsyncImageErrorKey = @"error";
     return self;
 }
 
+- (BOOL)isInCache
+{
+    return [cache imageForURL:URL] != nil;
+}
+
 - (void)loadFailedWithError:(NSError *)error
 {
 	loading = NO;
@@ -234,8 +240,11 @@ NSString *const AsyncImageErrorKey = @"error";
 {
 	if (!cancelled)
 	{
-		[cache setImage:image forURL:URL];
-		
+        if (image)
+        {
+            [cache setImage:image forURL:URL];
+        }
+        
 		NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										 image, AsyncImageImageKey,
 										 URL, AsyncImageURLKey,
@@ -367,6 +376,13 @@ NSString *const AsyncImageErrorKey = @"error";
         return;
     }
     
+    //check for nil URL
+    if (URL == nil)
+    {
+        [self cacheImage:nil];
+        return;
+    }
+    
     //check for cached image
 	UIImage *image = [cache imageForURL:URL];
     if (image)
@@ -469,12 +485,20 @@ NSString *const AsyncImageErrorKey = @"error";
     }
     
     //start connections
-    for (int i = 0; i < MIN(concurrentLoads, [connections count]); i++)
+    NSInteger count = 0;
+    for (AsyncImageConnection *connection in connections)
     {
-        AsyncImageConnection *connection = [connections objectAtIndex:i];
         if (![connection isLoading])
         {
-            [connection start];
+            if ([connection isInCache])
+            {
+                [connection start];
+            }
+            else if (count < concurrentLoads)
+            {
+                count ++;
+                [connection start];
+            }
         }
     }
 }

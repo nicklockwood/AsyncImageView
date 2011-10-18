@@ -1,3 +1,8 @@
+Version 1.2.3
+
+- Improved queuing behaviour so cached images aren't blocked from appearing by slow loading images in the queue.
+- Added example project.
+
 Version 1.2.2
 
 - Fixed crash when accessing imageURL that has already been released.
