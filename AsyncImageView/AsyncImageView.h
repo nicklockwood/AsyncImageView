@@ -1,12 +1,13 @@
 //
 //  AsyncImageView.h
 //
-//  Version 1.2.3
+//  Version 1.3 beta
 //
 //  Created by Nick Lockwood on 03/04/2011.
-//  Copyright 2010 Charcoal Design. All rights reserved.
+//  Copyright (c) 2011 Charcoal Design
 //
-//  Get the latest version of AsyncImageView from either of these locations:
+//  Distributed under the permissive zlib License
+//  Get the latest version from either of these locations:
 //
 //  http://charcoaldesign.co.uk/source/cocoa#asyncimageview
 //  https://github.com/nicklockwood/AsyncImageView
@@ -30,7 +31,41 @@
 //  3. This notice may not be removed or altered from any source distribution.
 //
 
+//
+//  ARC Helper
+//
+//  Version 1.2
+//
+//  Created by Nick Lockwood on 05/01/2012.
+//  Copyright 2012 Charcoal Design
+//
+//  Distributed under the permissive zlib license
+//  Get the latest version from here:
+//
+//  https://gist.github.com/1563325
+//
+
+#ifndef AH_RETAIN
+#if __has_feature(objc_arc)
+#define AH_RETAIN(x) x
+#define AH_RELEASE(x)
+#define AH_AUTORELEASE(x) x
+#define AH_SUPER_DEALLOC
+#else
+#define __AH_WEAK
+#define AH_WEAK assign
+#define AH_RETAIN(x) [x retain]
+#define AH_RELEASE(x) [x release]
+#define AH_AUTORELEASE(x) [x autorelease]
+#define AH_SUPER_DEALLOC [super dealloc]
+#endif
+#endif
+
+//  ARC Helper ends
+
+
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 
 
 extern NSString *const AsyncImageLoadDidFinish;
@@ -47,6 +82,7 @@ extern NSString *const AsyncImageErrorKey;
 + (AsyncImageCache *)sharedCache;
 
 @property (nonatomic, assign) BOOL useImageNamed;
+@property (nonatomic, assign) NSUInteger countLimit;
 
 - (UIImage *)imageForURL:(NSURL *)URL;
 - (void)setImage:(UIImage *)image forURL:(NSURL *)URL;
@@ -60,7 +96,7 @@ extern NSString *const AsyncImageErrorKey;
 
 + (AsyncImageLoader *)sharedLoader;
 
-@property (nonatomic, retain) AsyncImageCache *cache;
+@property (nonatomic, strong) AsyncImageCache *cache;
 @property (nonatomic, assign) NSUInteger concurrentLoads;
 @property (nonatomic, assign) NSTimeInterval loadingTimeout;
 @property (nonatomic, assign) BOOL decompressImages;
@@ -78,6 +114,14 @@ extern NSString *const AsyncImageErrorKey;
 
 @interface UIImageView(AsyncImageView)
 
-@property (nonatomic, retain) NSURL *imageURL;
+@property (nonatomic, strong) NSURL *imageURL;
+
+@end
+
+
+@interface AsyncImageView : UIImageView
+
+@property (nonatomic, assign) BOOL showActivityIndicator;
+@property (nonatomic, assign) BOOL crossFadeImages;
 
 @end

@@ -1,5 +1,5 @@
 AsyncImageView
-version 1.2.3, October 18th, 2011
+version 1.3 beta, February 2nd, 2012
 
 Copyright (C) 2011 Charcoal Design
 

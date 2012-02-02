@@ -1,3 +1,10 @@
+Version 1.3 beta
+
+- Added new AsyncImageView class with loading spinner and fade-in effect.
+- Fixed crash when setting a nil imageURL.
+- Now requires the QuartzCore framework.
+- Now requires iOS 4.x
+
 Version 1.2.3
 
 - Improved queuing behaviour so cached images aren't blocked from appearing by slow loading images in the queue.
