@@ -21,6 +21,26 @@
     
     //set title
     self.navigationItem.title = self.navigationController.tabBarItem.title;
+	
+	//get image URLs
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Images" ofType:@"plist"];
+    NSArray *imagePaths = [NSArray arrayWithContentsOfFile:plistPath];
+    
+    //remote image URLs
+    NSMutableArray *URLs = [NSMutableArray array];
+    for (NSString *path in imagePaths)
+    {
+        NSURL *URL = [NSURL URLWithString:path];
+        if (URL)
+        {
+            [URLs addObject:URL];
+        }
+        else
+        {
+            NSLog(@"'%@' is not a valid URL", path);
+        }
+    }
+    self.imageURLs = URLs;
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -40,30 +60,39 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
+#define IMAGE_VIEW_TAG 99
+	
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        
-        //common settings
-        cell.imageView.frame = CGRectMake(0.0f, 0.0f, 44.0f, 44.0f);
-        cell.imageView.contentMode = UIViewContentModeScaleAspectFill;
-        cell.imageView.clipsToBounds = YES;
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+		
+		//add AsyncImageView to cell
+		AsyncImageView *imageView = [[AsyncImageView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 44.0f, 44.0f)];
+		imageView.contentMode = UIViewContentModeScaleAspectFill;
+		imageView.clipsToBounds = YES;
+		imageView.tag = IMAGE_VIEW_TAG;
+		[cell addSubview:imageView];
+		[imageView release];
+		
+		//common settings
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+		cell.indentationWidth = 44.0f;
+		cell.indentationLevel = 1;
     }
     
+	//get image view
+	AsyncImageView *imageView = (AsyncImageView *)[cell viewWithTag:IMAGE_VIEW_TAG];
+	
     //display image path
     cell.textLabel.text = [[[imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
 
     //cancel loading previous image for cell
-    [[AsyncImageLoader sharedLoader] cancelLoadingURL:cell.imageView.imageURL];
-    
-    //set placeholder image or cell won't update when image is loaded
-    cell.imageView.image = [UIImage imageNamed:@"Placeholder.png"];
+    [[AsyncImageLoader sharedLoader] cancelLoadingURL:imageView.imageURL];
     
     //load the image
-    cell.imageView.imageURL = [imageURLs objectAtIndex:indexPath.row];
+    imageView.imageURL = [imageURLs objectAtIndex:indexPath.row];
     
     return cell;
 }

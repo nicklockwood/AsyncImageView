@@ -1,7 +1,7 @@
 //
 //  AsyncImageView.h
 //
-//  Version 1.3 beta
+//  Version 1.3 beta 2
 //
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright (c) 2011 Charcoal Design
@@ -122,6 +122,8 @@ extern NSString *const AsyncImageErrorKey;
 @interface AsyncImageView : UIImageView
 
 @property (nonatomic, assign) BOOL showActivityIndicator;
-@property (nonatomic, assign) BOOL crossFadeImages;
+@property (nonatomic, assign) UIActivityIndicatorViewStyle activityIndicatorStyle;
+@property (nonatomic, assign) BOOL crossfadeImages;
+@property (nonatomic, assign) NSTimeInterval crossfadeDuration;
 
 @end

@@ -1,7 +1,7 @@
 //
 //  AsyncImageView.m
 //
-//  Version 1.3 beta
+//  Version 1.3 beta 2
 //
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright (c) 2011 Charcoal Design
@@ -675,13 +675,17 @@ NSString *const AsyncImageErrorKey = @"error";
 @implementation AsyncImageView
 
 @synthesize showActivityIndicator;
-@synthesize crossFadeImages;
+@synthesize activityIndicatorStyle;
+@synthesize crossfadeImages;
+@synthesize crossfadeDuration;
 @synthesize activityView;
 
 - (void)setUp
 {
-    showActivityIndicator = (self.image == nil);
-    crossFadeImages = YES;
+	showActivityIndicator = (self.image == nil);
+	activityIndicatorStyle = UIActivityIndicatorViewStyleGray;
+    crossfadeImages = YES;
+	crossfadeDuration = 0.4;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -709,7 +713,7 @@ NSString *const AsyncImageErrorKey = @"error";
     {
         if (activityView == nil)
         {
-            activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+            activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:activityIndicatorStyle];
             activityView.hidesWhenStopped = YES;
             activityView.center = CGPointMake(self.bounds.size.width / 2.0f, self.bounds.size.width / 2.0f);
             activityView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
@@ -719,13 +723,20 @@ NSString *const AsyncImageErrorKey = @"error";
     }
 }
 
+- (void)setActivityIndicatorStyle:(UIActivityIndicatorViewStyle)style
+{
+	activityIndicatorStyle = style;
+	[activityView removeFromSuperview];
+	self.activityView = nil;
+}
+
 - (void)setImage:(UIImage *)image
 {
-    if (self.image && crossFadeImages)
+    if (crossfadeImages)
     {
         CATransition *animation = [CATransition animation];
         animation.type = kCATransitionFade;
-        animation.duration = 0.4f;
+        animation.duration = crossfadeDuration;
         [self.layer addAnimation:animation forKey:nil];
     }
     super.image = image;
@@ -735,6 +746,7 @@ NSString *const AsyncImageErrorKey = @"error";
 - (void)dealloc
 {
     [[AsyncImageLoader sharedLoader] cancelLoadingURL:self.imageURL target:self];
+	AH_RELEASE(activityView);
     AH_SUPER_DEALLOC;
 }
 

@@ -1,7 +1,7 @@
 Purpose
 --------------
 
-AsyncImageView is both a simple category on UIImageView for loading and displaying images asynchronously on iOS so that they do not lock up the UI, adn a UIImageView subclass for more advanced features. AsyncImageView works with URLs so it can be used with either local or remote files.
+AsyncImageView includes both a simple category on UIImageView for loading and displaying images asynchronously on iOS so that they do not lock up the UI, and a UIImageView subclass for more advanced features. AsyncImageView works with URLs so it can be used with either local or remote files.
 
 Loaded/downloaded images are cached in memory and are automatically cleaned up in the event of a memory warning. The AsyncImageView operates independently of the UIImage cache, but by default any images located in the root of the application bundle will be stored in the UIImage cache instead, avoiding any duplication of cached images.
 
@@ -55,17 +55,6 @@ Classes
 
 AsyncImageView includes an AsyncImageView class, which is a subclass of UIImageView. This implements some useful features on top of the UIImageView category, including the automatic display of a loading spinner, and a nice crossfade effect when the image loads.
 
-The AsyncImageView class has the following properties:
-
-    @property (nonatomic, assign) BOOL showActivityIndicator;
-    
-If YES, the AsyncImageView will display a loading spinner when the imageURL is set. This will automatically hide once the image has loaded. Defaults to YES.
-    
-    @property (nonatomic, assign) BOOL crossFadeImages;
-
-If YES, the image will crossfade in once it loads instead of appearing suddenly.  Defaults to YES.
-
-
 AsyncImageView also provides two singleton classes for advanced users:
 
     - AsyncImageCache
@@ -76,14 +65,40 @@ AsyncImageCache is a wrapper around NSCache that stores loaded/downloaded images
 AsyncImageLoader manages the loading/downloading and queueing of image requests. Set properties of the shared loader instance to control loading behaviour, or call its loading methods directly to preload images off-screen.
 
 
-AsyncImageCache methods
+AsyncImageView properties
 -------------------------
+
+The AsyncImageView class has the following properties:
+
+    @property (nonatomic, assign) BOOL showActivityIndicator;
+    
+If YES, the AsyncImageView will display a loading spinner when the imageURL is set. This will automatically hide once the image has loaded. Note that this value should bet set *before* setting the imageURL. Setting this value when loading is already in progress will have no effect. Defaults to YES.
+
+    @property (nonatomic, assign) UIActivityIndicatorViewStyle activityIndicatorStyle;
+    
+The style that will be used for the UIActivityIndicator (if enabled). Note that this value should bet set *before* setting the imageURL. Setting this value when loading is already in progress will cause the spinner to  disappear.
+    
+    @property (nonatomic, assign) BOOL crossfadeImages;
+
+If YES, the image will crossfade in once it loads instead of appearing suddenly.  Defaults to YES.
+
+    @property (nonatomic, assign) NSTimeInterval crossfadeDuration;
+    
+The crossfade animation duration, in seconds. Defaults to 0.4.
+
+
+AsyncImageCache properties
+---------------------------
 
 AsyncImageCache has the following property:
 
     @property (nonatomic, assign) BOOL useImageNamed;
     
 By default, AsyncImageCache will redirect any requests for images located in root of the application bundle to the UIImage imageNamed cache. This avoids duplication of images, but means you lose the ability to individually remove these images from cache. Set this property to NO to store all loaded images in the AsyncImageCache instead (this won't affect images loaded using the UIImage `imageNamed:` method).
+
+
+AsyncImageCache methods
+-------------------------
 
 AsyncImageCache has the following methods:
 
@@ -177,7 +192,7 @@ The target is retained by the AsyncImageLoader, however the loader will monitor 
     
     - (void)loadImageWithURL:(NSURL *)URL target:(id)target action:(SEL)action;
     
-Works the same as above, except the action will only be called if the loading is successfull. Failure can still be detected using `AsyncImageLoadDidFail` notification.
+Works the same as above, except the action will only be called if the loading is successful. Failure can still be detected using the `AsyncImageLoadDidFail` notification.
 
     - (void)loadImageWithURL:(NSURL *)URL;
     
@@ -205,7 +220,7 @@ Usage
 
 You can use the AsyncImageView class exactly as you would use a UIImageView. If you want to use it in Interface Builder, drag a regular UImageView or media image into your view as normal, then change its class to AsyncImageView in the inspector.
 
-For cases where you cannot use an AsyncImageView, such as the embedded imageView of a UIButton or UITableView, the UIImageView category means that you can still set the imageURL property on the imageView to load the image in the background. You will not get the advanced features of the AsyncImageView class this way however, unless you re-implement them yourself.
+For cases where you cannot use an AsyncImageView, such as the embedded imageView of a UIButton or UITableView, the UIImageView category means that you can still set the imageURL property on the imageView to load the image in the background. You will not get the advanced features of the AsyncImageView class this way however (such as the loading spinner), unless you re-implement them yourself.
 
 To load or download an image, simply set the imageURL property to the URL of the desired image. This can be a remote URL or a local fileURL that points to the application's bundle or documents folder.
 
