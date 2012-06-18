@@ -147,23 +147,14 @@ NSString *const AsyncImageErrorKey = @"error";
 @property (nonatomic, strong) id target;
 @property (nonatomic, assign) SEL success;
 @property (nonatomic, assign) SEL failure;
-@property (nonatomic, assign) BOOL decompressImage;
 @property (nonatomic, readonly, getter = isLoading) BOOL loading;
 @property (nonatomic, readonly) BOOL cancelled;
-
-+ (AsyncImageConnection *)connectionWithURL:(NSURL *)URL
-                                      cache:(AsyncImageCache *)cache
-									 target:(id)target
-									success:(SEL)success
-									failure:(SEL)failure
-							decompressImage:(BOOL)decompressImage;
 
 - (AsyncImageConnection *)initWithURL:(NSURL *)URL
                                 cache:(AsyncImageCache *)cache
 							   target:(id)target
 							  success:(SEL)success
-							  failure:(SEL)failure
-					  decompressImage:(BOOL)decompressImage;
+							  failure:(SEL)failure;
 
 - (void)start;
 - (void)cancel;
@@ -181,32 +172,14 @@ NSString *const AsyncImageErrorKey = @"error";
 @synthesize target;
 @synthesize success;
 @synthesize failure;
-@synthesize decompressImage;
 @synthesize loading;
 @synthesize cancelled;
-
-
-+ (AsyncImageConnection *)connectionWithURL:(NSURL *)URL
-                                      cache:(AsyncImageCache *)_cache
-									 target:(id)target
-									success:(SEL)_success
-									failure:(SEL)_failure
-							decompressImage:(BOOL)_decompressImage
-{
-    return AH_AUTORELEASE([[self alloc] initWithURL:URL
-                                              cache:_cache
-                                             target:target
-                                            success:_success
-                                            failure:_failure
-                                    decompressImage:_decompressImage]);
-}
 
 - (AsyncImageConnection *)initWithURL:(NSURL *)_URL
                                 cache:(AsyncImageCache *)_cache
 							   target:(id)_target
 							  success:(SEL)_success
 							  failure:(SEL)_failure
-					  decompressImage:(BOOL)_decompressImage
 {
     if ((self = [self init]))
     {
@@ -215,7 +188,6 @@ NSString *const AsyncImageErrorKey = @"error";
         self.target = _target;
         self.success = _success;
         self.failure = _failure;
-		self.decompressImage = _decompressImage;
     }
     return self;
 }
@@ -267,35 +239,19 @@ NSString *const AsyncImageErrorKey = @"error";
 	}
 }
 
-- (void)decompressImageInBackground:(UIImage *)image
-{
-	@synchronized ([self class])
-	{
-		if (!cancelled && decompressImage)
-		{
-			//force image decompression
-			UIGraphicsBeginImageContext(CGSizeMake(1, 1));
-			[image drawAtPoint:CGPointZero];
-			UIGraphicsEndImageContext();
-		}
-
-		//add to cache (may be cached already but it doesn't matter)
-		[self performSelectorOnMainThread:@selector(cacheImage:)
-							   withObject:image
-							waitUntilDone:YES];
-	}
-}
-
 - (void)processDataInBackground:(NSData *)_data
 {
 	@synchronized ([self class])
 	{	
 		if (!cancelled)
 		{
-			UIImage *image = [[UIImage alloc] initWithData:_data];
+            UIImage *image = [[UIImage alloc] initWithData:_data];
 			if (image)
 			{
-				[self decompressImageInBackground:image];
+				//add to cache (may be cached already but it doesn't matter)
+                [self performSelectorOnMainThread:@selector(cacheImage:)
+                                       withObject:image
+                                    waitUntilDone:YES];
                 AH_RELEASE(image);
 			}
 			else
@@ -324,15 +280,6 @@ NSString *const AsyncImageErrorKey = @"error";
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)_data
 {
-    //check for cached image
-	UIImage *image = [cache imageForURL:URL];
-    if (image)
-    {
-        [self cancel];
-        [self performSelectorInBackground:@selector(decompressImageInBackground:) withObject:image];
-        return;
-    }
-    
     //add data
     [data appendData:_data];
 }
@@ -373,7 +320,10 @@ NSString *const AsyncImageErrorKey = @"error";
 	UIImage *image = [cache imageForURL:URL];
     if (image)
     {
-        [self performSelectorInBackground:@selector(decompressImageInBackground:) withObject:image];
+        //add to cache (cached already but it doesn't matter)
+        [self performSelectorOnMainThread:@selector(cacheImage:)
+                               withObject:image
+                            waitUntilDone:YES];
         return;
     }
     
@@ -420,7 +370,6 @@ NSString *const AsyncImageErrorKey = @"error";
 @synthesize connections;
 @synthesize concurrentLoads;
 @synthesize loadingTimeout;
-@synthesize decompressImages;
 
 + (AsyncImageLoader *)sharedLoader
 {
@@ -439,7 +388,6 @@ NSString *const AsyncImageErrorKey = @"error";
         cache = AH_RETAIN([AsyncImageCache sharedCache]);
         concurrentLoads = 2;
         loadingTimeout = 60;
-		decompressImages = NO;
 		connections = [[NSMutableArray alloc] init];
         [[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(imageLoaded:)
@@ -566,12 +514,12 @@ NSString *const AsyncImageErrorKey = @"error";
 - (void)loadImageWithURL:(NSURL *)URL target:(id)target success:(SEL)success failure:(SEL)failure
 {
     //create new connection
-    [connections addObject:[AsyncImageConnection connectionWithURL:URL
-                                                             cache:cache
-															target:target
-														   success:success
-														   failure:failure
-												   decompressImage:decompressImages]];
+    AsyncImageConnection *connection = [[AsyncImageConnection alloc] initWithURL:URL
+                                                                           cache:cache
+                                                                          target:target
+                                                                         success:success
+                                                                         failure:failure];
+    [connections addObject:AH_AUTORELEASE(connection)];
     [self updateQueue];
 }
 

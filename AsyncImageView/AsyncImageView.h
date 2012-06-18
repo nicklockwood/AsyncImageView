@@ -99,7 +99,6 @@ extern NSString *const AsyncImageErrorKey;
 @property (nonatomic, strong) AsyncImageCache *cache;
 @property (nonatomic, assign) NSUInteger concurrentLoads;
 @property (nonatomic, assign) NSTimeInterval loadingTimeout;
-@property (nonatomic, assign) BOOL decompressImages;
 
 - (void)loadImageWithURL:(NSURL *)URL target:(id)target success:(SEL)success failure:(SEL)failure;
 - (void)loadImageWithURL:(NSURL *)URL target:(id)target action:(SEL)action;

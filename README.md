@@ -5,7 +5,7 @@ AsyncImageView includes both a simple category on UIImageView for loading and di
 
 Loaded/downloaded images are cached in memory and are automatically cleaned up in the event of a memory warning. The AsyncImageView operates independently of the UIImage cache, but by default any images located in the root of the application bundle will be stored in the UIImage cache instead, avoiding any duplication of cached images.
 
-The library can can be used to load and cache images independently of a UIImageView as it provides direct access to the underlying loading and caching classes.
+The library can also be used to load and cache images independently of a UIImageView as it provides direct access to the underlying loading and caching classes.
 
 
 Supported OS & SDK Versions

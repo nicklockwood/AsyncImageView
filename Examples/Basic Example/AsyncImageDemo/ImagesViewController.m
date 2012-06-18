@@ -46,11 +46,11 @@
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
         
         //common settings
-        cell.imageView.frame = CGRectMake(0.0f, 0.0f, 44.0f, 44.0f);
-        cell.imageView.contentMode = UIViewContentModeScaleAspectFill;
-        cell.imageView.clipsToBounds = YES;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+        cell.imageView.contentMode = UIViewContentModeScaleAspectFill;
+        cell.imageView.frame = CGRectMake(0.0f, 0.0f, 44.0f, 44.0f);
+        cell.imageView.clipsToBounds = YES;
     }
     
     //display image path
