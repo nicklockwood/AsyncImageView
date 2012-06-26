@@ -193,7 +193,7 @@
 		01C28C27144CA9F7005C3EB1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = 01C28C2A144CA9F7005C3EB1 /* Build configuration list for PBXProject "AsyncImageDemo" */;
 			compatibilityVersion = "Xcode 3.2";

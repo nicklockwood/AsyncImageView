@@ -1,7 +1,7 @@
 //
 //  AsyncImageView.h
 //
-//  Version 1.3 beta 2
+//  Version 1.3
 //
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright (c) 2011 Charcoal Design
@@ -34,7 +34,7 @@
 //
 //  ARC Helper
 //
-//  Version 1.2
+//  Version 2.1
 //
 //  Created by Nick Lockwood on 05/01/2012.
 //  Copyright 2012 Charcoal Design
@@ -45,19 +45,16 @@
 //  https://gist.github.com/1563325
 //
 
-#ifndef AH_RETAIN
+#ifndef ah_retain
 #if __has_feature(objc_arc)
-#define AH_RETAIN(x) x
-#define AH_RELEASE(x)
-#define AH_AUTORELEASE(x) x
-#define AH_SUPER_DEALLOC
+#define ah_retain self
+#define ah_dealloc self
+#define release self
+#define autorelease self
 #else
-#define __AH_WEAK
-#define AH_WEAK assign
-#define AH_RETAIN(x) [x retain]
-#define AH_RELEASE(x) [x release]
-#define AH_AUTORELEASE(x) [x autorelease]
-#define AH_SUPER_DEALLOC [super dealloc]
+#define ah_retain retain
+#define ah_dealloc dealloc
+#define __bridge
 #endif
 #endif
 
@@ -106,7 +103,10 @@ extern NSString *const AsyncImageErrorKey;
 - (void)cancelLoadingURL:(NSURL *)URL target:(id)target action:(SEL)action;
 - (void)cancelLoadingURL:(NSURL *)URL target:(id)target;
 - (void)cancelLoadingURL:(NSURL *)URL;
+- (void)cancelLoadingImagesForTarget:(id)target action:(SEL)action;
+- (void)cancelLoadingImagesForTarget:(id)target;
 - (NSURL *)URLForTarget:(id)target action:(SEL)action;
+- (NSURL *)URLForTarget:(id)target;
 
 @end
 

@@ -41,7 +41,7 @@ Categories
 
 The basic interface of AsyncImageView is a category that extends UIImageView with the following property:
 
-    @property (nonatomic, retain) NSURL *imageURL;
+    @property (nonatomic, strong) NSURL *imageURL;
     
 Upon setting this property, AsyncImageView will begin loading/downloading the specified image on a background thread. Once the image file has loaded, the UIImageView's image property will be set to the resultant image. If you set this property again while the previous image is still loading then the images will be queued for loading in the order in which they were set.
 
@@ -162,7 +162,7 @@ AsyncImageLoader properties
 
 AsyncImageLoader has the following properties:
 
-    @property (nonatomic, retain) AsyncImageCache *cache;
+    @property (nonatomic, strong) AsyncImageCache *cache;
 
 The cache to be used for image load requests. You can change this value at any time and it will affect all subsequent load requests until it is changed again. By default this is set to `[AsyncImageCache sharedCache]`. Set this to nil to disable caching completely, or you can set it to a new AsyncImageCache instance or subclass for fine-grained cache control.
 
@@ -173,10 +173,6 @@ The number of images to load concurrently. Images are loaded on background threa
     @property (nonatomic, assign) NSTimeInterval loadingTimeout;
 
 The loading timeout, in seconds. This defaults to 60, which should be more than enough for loading locally stored images, but may be too short for downloading large images over 3G.
-
-    @property (nonatomic, assign) BOOL decompressImages;
-
-iOS defers decompression of loaded images until the last possible moment, which is usually the point at which they are displayed. This is efficient in terms of memory usage, but can have a negative impact on performance when you are streaming images on the fly, such as when you want to display them in a UITableView or carousel. The `decompressImages` option decompresses loaded images on a background thread by pre-drawing them into a 1 pixel context (see http://www.cocoanetics.com/2011/10/avoiding-image-decompression-sickness/ for more information). This property defaults to NO.
 
 
 AsyncImageLoader methods
@@ -209,10 +205,22 @@ This cancels loading the image with the specified URL for any actions on the spe
     - (void)cancelLoadingURL:(NSURL *)URL;
     
 This cancels loading the image with the specified URL.
+
+    - (void)cancelLoadingImagesForTarget:(id)target action:(SEL)action;
+    
+This cancels loading all queued image URLs with the specified action on the specified target;
+    
+    - (void)cancelLoadingImagesForTarget:(id)target;
+    
+This cancels loading all queued image URLs for the specified target;
     
     - (NSURL *)URLForTarget:(id)target action:(SEL)action;
     
 This returns the most recent image URL set for the given target and action, which may not be the next one to be loaded if several image URLs have been queued on that target.
+
+    - (NSURL *)URLForTarget:(id)target;
+
+This returns the most recent image URL set for the given target, which may not be the next one to be loaded if several image URLs have been queued on that target.
 
 
 Usage

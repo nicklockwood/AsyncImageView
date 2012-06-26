@@ -1,7 +1,7 @@
 //
 //  AsyncImageView.m
 //
-//  Version 1.3 beta 2
+//  Version 1.3
 //
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright (c) 2011 Charcoal Design
@@ -55,8 +55,8 @@ NSString *const AsyncImageErrorKey = @"error";
 
 @implementation AsyncImageCache
 
-@synthesize cache;
-@synthesize useImageNamed;
+@synthesize cache = _cache;
+@synthesize useImageNamed = _useImageNamed;
 
 + (AsyncImageCache *)sharedCache
 {
@@ -72,25 +72,25 @@ NSString *const AsyncImageErrorKey = @"error";
 {
     if ((self = [super init]))
     {
-		useImageNamed = YES;
-        cache = [[NSCache alloc] init];
+		_useImageNamed = YES;
+        _cache = [[NSCache alloc] init];
     }
     return self;
 }
 
 - (void)setCountLimit:(NSUInteger)countLimit
 {
-    cache.countLimit = countLimit;
+    _cache.countLimit = countLimit;
 }
 
 - (NSUInteger)countLimit
 {
-    return cache.countLimit;
+    return _cache.countLimit;
 }
 
 - (UIImage *)imageForURL:(NSURL *)URL
 {
-	if (useImageNamed && [URL isFileURL])
+	if (_useImageNamed && [URL isFileURL])
 	{
 		NSString *path = [URL path];
 		NSString *imageName = [path lastPathComponent];
@@ -100,12 +100,12 @@ NSString *const AsyncImageErrorKey = @"error";
 			return [UIImage imageNamed:imageName];
 		}
 	}
-    return [cache objectForKey:URL];
+    return [_cache objectForKey:URL];
 }
 
 - (void)setImage:(UIImage *)image forURL:(NSURL *)URL
 {
-    if (useImageNamed && [URL isFileURL])
+    if (_useImageNamed && [URL isFileURL])
     {
         NSString *path = [URL path];
         NSString *directory = [path stringByDeletingLastPathComponent];
@@ -115,24 +115,27 @@ NSString *const AsyncImageErrorKey = @"error";
             return;
         }
     }
-    [cache setObject:image forKey:URL];
+    if (image && URL)
+    {
+        [_cache setObject:image forKey:URL];
+    }
 }
 
 - (void)removeImageForURL:(NSURL *)URL
 {
-    [cache removeObjectForKey:URL];
+    [_cache removeObjectForKey:URL];
 }
 
 - (void)clearCache
 {
     //remove objects that aren't in use
-    [cache removeAllObjects];
+    [_cache removeAllObjects];
 }
 
 - (void)dealloc
 {
-    AH_RELEASE(cache);
-    AH_SUPER_DEALLOC;
+    [_cache release];
+    [super dealloc];
 }
 
 @end
@@ -165,94 +168,94 @@ NSString *const AsyncImageErrorKey = @"error";
 
 @implementation AsyncImageConnection
 
-@synthesize connection;
-@synthesize data;
-@synthesize URL;
-@synthesize cache;
-@synthesize target;
-@synthesize success;
-@synthesize failure;
-@synthesize loading;
-@synthesize cancelled;
+@synthesize connection = _connection;
+@synthesize data = _data;
+@synthesize URL = _URL;
+@synthesize cache = _cache;
+@synthesize target = _target;
+@synthesize success = _success;
+@synthesize failure = _failure;
+@synthesize loading = _loading;
+@synthesize cancelled = _cancelled;
 
-- (AsyncImageConnection *)initWithURL:(NSURL *)_URL
-                                cache:(AsyncImageCache *)_cache
-							   target:(id)_target
-							  success:(SEL)_success
-							  failure:(SEL)_failure
+- (AsyncImageConnection *)initWithURL:(NSURL *)URL
+                                cache:(AsyncImageCache *)cache
+							   target:(id)target
+							  success:(SEL)success
+							  failure:(SEL)failure
 {
     if ((self = [self init]))
     {
-        self.URL = _URL;
-        self.cache = _cache;
-        self.target = _target;
-        self.success = _success;
-        self.failure = _failure;
+        self.URL = URL;
+        self.cache = cache;
+        self.target = target;
+        self.success = success;
+        self.failure = failure;
     }
     return self;
 }
 
 - (BOOL)isInCache
 {
-    return [cache imageForURL:URL] != nil;
+    return [_cache imageForURL:_URL] != nil;
 }
 
 - (void)loadFailedWithError:(NSError *)error
 {
-	loading = NO;
-	cancelled = NO;
+	_loading = NO;
+	_cancelled = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:AsyncImageLoadDidFail
-                                                        object:target
+                                                        object:_target
                                                       userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                URL, AsyncImageURLKey,
+                                                                _URL, AsyncImageURLKey,
                                                                 error, AsyncImageErrorKey,
                                                                 nil]];
 }
 
 - (void)cacheImage:(UIImage *)image
 {
-	if (!cancelled)
+	if (!_cancelled)
 	{
         if (image)
         {
-            [cache setImage:image forURL:URL];
+            [_cache setImage:image forURL:_URL];
         }
         
 		NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										 image, AsyncImageImageKey,
-										 URL, AsyncImageURLKey,
+										 _URL, AsyncImageURLKey,
 										 nil];
-		if (cache)
+		if (_cache)
 		{
-			[userInfo setObject:cache forKey:AsyncImageCacheKey];
+			[userInfo setObject:_cache forKey:AsyncImageCacheKey];
 		}
 		
-		loading = NO;
+		_loading = NO;
 		[[NSNotificationCenter defaultCenter] postNotificationName:AsyncImageLoadDidFinish
-															object:target
-														  userInfo:AH_AUTORELEASE([userInfo copy])];
+															object:_target
+														  userInfo:[[userInfo copy] autorelease]];
 	}
 	else
 	{
-		loading = NO;
-		cancelled = NO;
+		_loading = NO;
+		_cancelled = NO;
 	}
 }
 
-- (void)processDataInBackground:(NSData *)_data
+- (void)processDataInBackground:(NSData *)data
 {
 	@synchronized ([self class])
 	{	
-		if (!cancelled)
+		if (!_cancelled)
 		{
-            UIImage *image = [[UIImage alloc] initWithData:_data];
+            UIImage *image = [[UIImage alloc] initWithData:data];
 			if (image)
 			{
 				//add to cache (may be cached already but it doesn't matter)
                 [self performSelectorOnMainThread:@selector(cacheImage:)
                                        withObject:image
                                     waitUntilDone:YES];
-                AH_RELEASE(image);
+                [image release];
 			}
 			else
 			{
@@ -278,15 +281,15 @@ NSString *const AsyncImageErrorKey = @"error";
     self.data = [NSMutableData data];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)_data
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     //add data
-    [data appendData:_data];
+    [_data appendData:data];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    [self performSelectorInBackground:@selector(processDataInBackground:) withObject:data];
+    [self performSelectorInBackground:@selector(processDataInBackground:) withObject:_data];
     self.connection = nil;
     self.data = nil;
 }
@@ -300,58 +303,58 @@ NSString *const AsyncImageErrorKey = @"error";
 
 - (void)start
 {
-    if (loading && !cancelled)
+    if (_loading && !_cancelled)
     {
         return;
     }
 	
 	//begin loading
-	loading = YES;
-	cancelled = NO;
+	_loading = YES;
+	_cancelled = NO;
     
     //check for nil URL
-    if (URL == nil)
+    if (_URL == nil)
     {
         [self cacheImage:nil];
         return;
     }
     
     //check for cached image
-	UIImage *image = [cache imageForURL:URL];
+	UIImage *image = [_cache imageForURL:_URL];
     if (image)
     {
         //add to cache (cached already but it doesn't matter)
         [self performSelectorOnMainThread:@selector(cacheImage:)
                                withObject:image
-                            waitUntilDone:YES];
+                            waitUntilDone:NO];
         return;
     }
     
     //begin load
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL
+    NSURLRequest *request = [NSURLRequest requestWithURL:_URL
                                              cachePolicy:NSURLCacheStorageNotAllowed
                                          timeoutInterval:[AsyncImageLoader sharedLoader].loadingTimeout];
     
-    connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
-    [connection scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-    [connection start];
+    _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+    [_connection scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+    [_connection start];
 }
 
 - (void)cancel
 {
-	cancelled = YES;
-    [connection cancel];
+	_cancelled = YES;
+    [_connection cancel];
     self.connection = nil;
     self.data = nil;
 }
 
 - (void)dealloc
 {
-    AH_RELEASE(connection);
-    AH_RELEASE(data);
-    AH_RELEASE(URL);
-    AH_RELEASE(target);
-    AH_SUPER_DEALLOC;
+    [_connection release];
+    [_data release];
+    [_URL release];
+    [_target release];
+    [super ah_dealloc];
 }
 
 @end
@@ -366,10 +369,10 @@ NSString *const AsyncImageErrorKey = @"error";
 
 @implementation AsyncImageLoader
 
-@synthesize cache;
-@synthesize connections;
-@synthesize concurrentLoads;
-@synthesize loadingTimeout;
+@synthesize cache = _cache;
+@synthesize connections = _connections;
+@synthesize concurrentLoads = _concurrentLoads;
+@synthesize loadingTimeout = _loadingTimeout;
 
 + (AsyncImageLoader *)sharedLoader
 {
@@ -385,10 +388,10 @@ NSString *const AsyncImageErrorKey = @"error";
 {
 	if ((self = [super init]))
 	{
-        cache = AH_RETAIN([AsyncImageCache sharedCache]);
-        concurrentLoads = 2;
-        loadingTimeout = 60;
-		connections = [[NSMutableArray alloc] init];
+        _cache = [[AsyncImageCache sharedCache] ah_retain];
+        _concurrentLoads = 2;
+        _loadingTimeout = 60.0;
+		_connections = [[NSMutableArray alloc] init];
         [[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(imageLoaded:)
 													 name:AsyncImageLoadDidFinish
@@ -409,7 +412,7 @@ NSString *const AsyncImageErrorKey = @"error";
 {
     //start connections
     NSInteger count = 0;
-    for (AsyncImageConnection *connection in connections)
+    for (AsyncImageConnection *connection in _connections)
     {
         if (![connection isLoading])
         {
@@ -417,7 +420,7 @@ NSString *const AsyncImageErrorKey = @"error";
             {
                 [connection start];
             }
-            else if (count < concurrentLoads)
+            else if (count < _concurrentLoads)
             {
                 count ++;
                 [connection start];
@@ -430,20 +433,20 @@ NSString *const AsyncImageErrorKey = @"error";
 {  
     //complete connections for URL
     NSURL *URL = [notification.userInfo objectForKey:AsyncImageURLKey];
-    for (int i = [connections count] - 1; i >= 0; i--)
+    for (int i = [_connections count] - 1; i >= 0; i--)
     {
-        AsyncImageConnection *connection = [connections objectAtIndex:i];
+        AsyncImageConnection *connection = [_connections objectAtIndex:i];
         if (connection.URL == URL || [connection.URL isEqual:URL])
         {
             //cancel earlier connections for same target/action
             for (int j = i - 1; j >= 0; j--)
             {
-                AsyncImageConnection *earlier = [connections objectAtIndex:j];
+                AsyncImageConnection *earlier = [_connections objectAtIndex:j];
                 if (earlier.target == connection.target &&
                     earlier.success == connection.success)
                 {
                     [earlier cancel];
-                    [connections removeObjectAtIndex:j];
+                    [_connections removeObjectAtIndex:j];
                     i--;
                 }
             }
@@ -456,7 +459,7 @@ NSString *const AsyncImageErrorKey = @"error";
             objc_msgSend(connection.target, connection.success, image, connection.URL);
 
             //remove from queue
-            [connections removeObjectAtIndex:i];
+            [_connections removeObjectAtIndex:i];
         }
     }
     
@@ -468,9 +471,9 @@ NSString *const AsyncImageErrorKey = @"error";
 {
     //remove connections for URL
     NSURL *URL = [notification.userInfo objectForKey:AsyncImageURLKey];
-    for (int i = [connections count] - 1; i >= 0; i--)
+    for (int i = [_connections count] - 1; i >= 0; i--)
     {
-        AsyncImageConnection *connection = [connections objectAtIndex:i];
+        AsyncImageConnection *connection = [_connections objectAtIndex:i];
         if ([connection.URL isEqual:URL])
         {
             //cancel connection (in case it's a duplicate)
@@ -484,7 +487,7 @@ NSString *const AsyncImageErrorKey = @"error";
             }
             
             //remove from queue
-            [connections removeObjectAtIndex:i];
+            [_connections removeObjectAtIndex:i];
         }
     }
     
@@ -496,14 +499,14 @@ NSString *const AsyncImageErrorKey = @"error";
 {
     //remove connections for URL
     id target = [notification object];
-    for (int i = [connections count] - 1; i >= 0; i--)
+    for (int i = [_connections count] - 1; i >= 0; i--)
     {
-        AsyncImageConnection *connection = [connections objectAtIndex:i];
+        AsyncImageConnection *connection = [_connections objectAtIndex:i];
         if (connection.target == target)
         {
             //cancel connection
             [connection cancel];
-            [connections removeObjectAtIndex:i];
+            [_connections removeObjectAtIndex:i];
         }
     }
     
@@ -515,11 +518,11 @@ NSString *const AsyncImageErrorKey = @"error";
 {
     //create new connection
     AsyncImageConnection *connection = [[AsyncImageConnection alloc] initWithURL:URL
-                                                                           cache:cache
+                                                                           cache:_cache
                                                                           target:target
                                                                          success:success
                                                                          failure:failure];
-    [connections addObject:AH_AUTORELEASE(connection)];
+    [_connections addObject:[connection autorelease]];
     [self updateQueue];
 }
 
@@ -535,53 +538,92 @@ NSString *const AsyncImageErrorKey = @"error";
 
 - (void)cancelLoadingURL:(NSURL *)URL target:(id)target action:(SEL)action
 {
-    for (int i = [connections count] - 1; i >= 0; i--)
+    for (int i = [_connections count] - 1; i >= 0; i--)
     {
-        AsyncImageConnection *connection = [connections objectAtIndex:i];
+        AsyncImageConnection *connection = [_connections objectAtIndex:i];
         if ([connection.URL isEqual:URL] && connection.target == target && connection.success == action)
         {
             [connection cancel];
-            [connections removeObjectAtIndex:i];
+            [_connections removeObjectAtIndex:i];
         }
     }
 }
 
 - (void)cancelLoadingURL:(NSURL *)URL target:(id)target
 {
-    for (int i = [connections count] - 1; i >= 0; i--)
+    for (int i = [_connections count] - 1; i >= 0; i--)
     {
-        AsyncImageConnection *connection = [connections objectAtIndex:i];
+        AsyncImageConnection *connection = [_connections objectAtIndex:i];
         if ([connection.URL isEqual:URL] && connection.target == target)
         {
             [connection cancel];
-            [connections removeObjectAtIndex:i];
+            [_connections removeObjectAtIndex:i];
         }
     }
 }
 
 - (void)cancelLoadingURL:(NSURL *)URL
 {
-    for (int i = [connections count] - 1; i >= 0; i--)
+    for (int i = [_connections count] - 1; i >= 0; i--)
     {
-        AsyncImageConnection *connection = [connections objectAtIndex:i];
+        AsyncImageConnection *connection = [_connections objectAtIndex:i];
         if ([connection.URL isEqual:URL])
         {
             [connection cancel];
-            [connections removeObjectAtIndex:i];
+            [_connections removeObjectAtIndex:i];
+        }
+    }
+}
+
+- (void)cancelLoadingImagesForTarget:(id)target action:(SEL)action
+{
+    for (int i = [_connections count] - 1; i >= 0; i--)
+    {
+        AsyncImageConnection *connection = [_connections objectAtIndex:i];
+        if (connection.target == target && connection.success == action)
+        {
+            [connection cancel];
+        }
+    }
+}
+
+- (void)cancelLoadingImagesForTarget:(id)target
+{
+    for (int i = [_connections count] - 1; i >= 0; i--)
+    {
+        AsyncImageConnection *connection = [_connections objectAtIndex:i];
+        if (connection.target == target)
+        {
+            [connection cancel];
         }
     }
 }
 
 - (NSURL *)URLForTarget:(id)target action:(SEL)action
 {
-    //return the most recent image URL assigned to the target
+    //return the most recent image URL assigned to the target for the given action
     //this is not neccesarily the next image that will be assigned
-    for (int i = [connections count] - 1; i >= 0; i--)
+    for (int i = [_connections count] - 1; i >= 0; i--)
     {
-        AsyncImageConnection *connection = [connections objectAtIndex:i];
+        AsyncImageConnection *connection = [_connections objectAtIndex:i];
         if (connection.target == target && connection.success == action)
         {
-            return AH_AUTORELEASE(AH_RETAIN(connection.URL));
+            return [[connection.URL ah_retain] autorelease];
+        }
+    }
+    return nil;
+}
+
+- (NSURL *)URLForTarget:(id)target
+{
+    //return the most recent image URL assigned to the target
+    //this is not neccesarily the next image that will be assigned
+    for (int i = [_connections count] - 1; i >= 0; i--)
+    {
+        AsyncImageConnection *connection = [_connections objectAtIndex:i];
+        if (connection.target == target)
+        {
+            return [[connection.URL ah_retain] autorelease];
         }
     }
     return nil;
@@ -590,9 +632,9 @@ NSString *const AsyncImageErrorKey = @"error";
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-    AH_RELEASE(cache);
-    AH_RELEASE(connections);
-    AH_SUPER_DEALLOC;
+    [_cache release];
+    [_connections release];
+    [super ah_dealloc];
 }
 
 @end
@@ -622,18 +664,18 @@ NSString *const AsyncImageErrorKey = @"error";
 
 @implementation AsyncImageView
 
-@synthesize showActivityIndicator;
-@synthesize activityIndicatorStyle;
-@synthesize crossfadeImages;
-@synthesize crossfadeDuration;
-@synthesize activityView;
+@synthesize showActivityIndicator = _showActivityIndicator;
+@synthesize activityIndicatorStyle = _activityIndicatorStyle;
+@synthesize crossfadeImages = _crossfadeImages;
+@synthesize crossfadeDuration = _crossfadeDuration;
+@synthesize activityView = _activityView;
 
 - (void)setUp
 {
-	showActivityIndicator = (self.image == nil);
-	activityIndicatorStyle = UIActivityIndicatorViewStyleGray;
-    crossfadeImages = YES;
-	crossfadeDuration = 0.4;
+	_showActivityIndicator = (self.image == nil);
+	_activityIndicatorStyle = UIActivityIndicatorViewStyleGray;
+    _crossfadeImages = YES;
+	_crossfadeDuration = 0.4;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -657,45 +699,45 @@ NSString *const AsyncImageErrorKey = @"error";
 - (void)setImageURL:(NSURL *)imageURL
 {
     super.imageURL = imageURL;
-    if (showActivityIndicator && !self.image)
+    if (_showActivityIndicator && !self.image)
     {
-        if (activityView == nil)
+        if (_activityView == nil)
         {
-            activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:activityIndicatorStyle];
-            activityView.hidesWhenStopped = YES;
-            activityView.center = CGPointMake(self.bounds.size.width / 2.0f, self.bounds.size.height / 2.0f);
-            activityView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
-            [self addSubview:activityView];
+            _activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:_activityIndicatorStyle];
+            _activityView.hidesWhenStopped = YES;
+            _activityView.center = CGPointMake(self.bounds.size.width / 2.0f, self.bounds.size.height / 2.0f);
+            _activityView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
+            [self addSubview:_activityView];
         }
-        [activityView startAnimating];
+        [_activityView startAnimating];
     }
 }
 
 - (void)setActivityIndicatorStyle:(UIActivityIndicatorViewStyle)style
 {
-	activityIndicatorStyle = style;
-	[activityView removeFromSuperview];
+	_activityIndicatorStyle = style;
+	[_activityView removeFromSuperview];
 	self.activityView = nil;
 }
 
 - (void)setImage:(UIImage *)image
 {
-    if (crossfadeImages)
+    if (_crossfadeImages)
     {
         CATransition *animation = [CATransition animation];
         animation.type = kCATransitionFade;
-        animation.duration = crossfadeDuration;
+        animation.duration = _crossfadeDuration;
         [self.layer addAnimation:animation forKey:nil];
     }
     super.image = image;
-    [activityView stopAnimating];
+    [_activityView stopAnimating];
 }
 
 - (void)dealloc
 {
     [[AsyncImageLoader sharedLoader] cancelLoadingURL:self.imageURL target:self];
-	AH_RELEASE(activityView);
-    AH_SUPER_DEALLOC;
+	[_activityView release];
+    [super ah_dealloc];
 }
 
 @end

@@ -1,15 +1,15 @@
-Version 1.3 beta 2
+Version 1.3
 
 - Added additional effects options to AsyncImageView
+- Added additional AsyncImageLoader methods
 - Fixed broken example
 - Added Effects example
 - AsyncImageView now fades in the first time image is set
 - Fixed memory leak in AsyncImageView
-
-Version 1.3 beta 1
-
+- Update ARC Helper
 - Added new AsyncImageView class with loading spinner and crossfade effect.
 - Fixed crash when setting a nil imageURL.
+- Fixed crash when image fails to load.
 - Now requires the QuartzCore framework.
 - Now requires iOS 4.x
 
