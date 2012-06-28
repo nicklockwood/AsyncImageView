@@ -65,6 +65,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil)
     {
+        //create new cell
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
 		
 		//add AsyncImageView to cell
@@ -85,15 +86,15 @@
 	//get image view
 	AsyncImageView *imageView = (AsyncImageView *)[cell viewWithTag:IMAGE_VIEW_TAG];
 	
-    //display image path
-    cell.textLabel.text = [[[imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
-
     //cancel loading previous image for cell
-    [[AsyncImageLoader sharedLoader] cancelLoadingURL:imageView.imageURL];
+    [[AsyncImageLoader sharedLoader] cancelLoadingImagesForTarget:imageView];
     
     //load the image
     imageView.imageURL = [imageURLs objectAtIndex:indexPath.row];
-    
+        
+    //display image path
+    cell.textLabel.text = [[[imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
+
     return cell;
 }
 

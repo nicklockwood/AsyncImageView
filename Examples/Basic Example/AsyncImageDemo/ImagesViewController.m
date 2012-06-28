@@ -43,6 +43,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil)
     {
+        //create new cell
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
         
         //common settings
@@ -52,18 +53,20 @@
         cell.imageView.frame = CGRectMake(0.0f, 0.0f, 44.0f, 44.0f);
         cell.imageView.clipsToBounds = YES;
     }
-    
-    //display image path
-    cell.textLabel.text = [[[imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
-
-    //cancel loading previous image for cell
-    [[AsyncImageLoader sharedLoader] cancelLoadingURL:cell.imageView.imageURL];
+    else
+    {
+        //cancel loading previous image for cell
+        [[AsyncImageLoader sharedLoader] cancelLoadingImagesForTarget:cell.imageView];
+    }
     
     //set placeholder image or cell won't update when image is loaded
     cell.imageView.image = [UIImage imageNamed:@"Placeholder.png"];
     
     //load the image
     cell.imageView.imageURL = [imageURLs objectAtIndex:indexPath.row];
+    
+    //display image path
+    cell.textLabel.text = [[[imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
     
     return cell;
 }
