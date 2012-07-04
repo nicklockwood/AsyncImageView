@@ -23,7 +23,7 @@
 
 - (IBAction)toggleCache:(UISwitch *)sender
 {
-    [AsyncImageLoader sharedLoader].cache = (sender.on)? [AsyncImageCache sharedCache]: nil;
+    [AsyncImageLoader sharedLoader].cache = (sender.on)? [AsyncImageLoader defaultCache]: nil;
 }
 
 - (void)viewDidUnload

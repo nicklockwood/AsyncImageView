@@ -24,7 +24,6 @@
 		01C28C7A144CE214005C3EB1 /* ImageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01C28C78144CE213005C3EB1 /* ImageViewController.xib */; };
 		01C28C7E144D5F0A005C3EB1 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C28C7C144D5F07005C3EB1 /* SettingsViewController.m */; };
 		01C28C7F144D5F0A005C3EB1 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01C28C7D144D5F08005C3EB1 /* SettingsViewController.xib */; };
-		B229D6BA14E9082E00978A25 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B229D6B914E9082E00978A25 /* QuartzCore.framework */; };
 		B229D6CA14E90ADA00978A25 /* AsyncImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B229D6C914E90ADA00978A25 /* AsyncImageView.m */; };
 /* End PBXBuildFile section */
 
@@ -55,7 +54,6 @@
 		01C28C7B144D5F07005C3EB1 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		01C28C7C144D5F07005C3EB1 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		01C28C7D144D5F08005C3EB1 /* SettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsViewController.xib; sourceTree = "<group>"; };
-		B229D6B914E9082E00978A25 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B229D6C814E90ADA00978A25 /* AsyncImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageView.h; sourceTree = "<group>"; };
 		B229D6C914E90ADA00978A25 /* AsyncImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncImageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -65,7 +63,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B229D6BA14E9082E00978A25 /* QuartzCore.framework in Frameworks */,
 				01C28C35144CA9F8005C3EB1 /* UIKit.framework in Frameworks */,
 				01C28C37144CA9F8005C3EB1 /* Foundation.framework in Frameworks */,
 				01C28C39144CA9F8005C3EB1 /* CoreGraphics.framework in Frameworks */,
@@ -99,7 +96,6 @@
 				01C28C34144CA9F8005C3EB1 /* UIKit.framework */,
 				01C28C36144CA9F8005C3EB1 /* Foundation.framework */,
 				01C28C38144CA9F8005C3EB1 /* CoreGraphics.framework */,
-				B229D6B914E9082E00978A25 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

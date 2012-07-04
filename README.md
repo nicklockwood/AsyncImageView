@@ -33,7 +33,7 @@ AsyncImageView uses threading internally, but none of the AsyncImageView externa
 Installation
 --------------
 
-To use the AsyncImageView in an app, just drag the AsyncImageView class files into your project and add the QuartzCore framework to your project.
+To use the AsyncImageView in an app, just drag the AsyncImageView class files into your project.
 
 
 Categories
@@ -55,14 +55,7 @@ Classes
 
 AsyncImageView includes an AsyncImageView class, which is a subclass of UIImageView. This implements some useful features on top of the UIImageView category, including the automatic display of a loading spinner, and a nice crossfade effect when the image loads.
 
-AsyncImageView also provides two singleton classes for advanced users:
-
-    - AsyncImageCache
-    - AsyncImageLoader
-    
-AsyncImageCache is a wrapper around NSCache that stores loaded/downloaded images by URL. It can be used to individually manipulate or remove cached images, and can be subclassed to add features not currently supported by the library (e.g. disk caching).
-
-AsyncImageLoader manages the loading/downloading and queueing of image requests. Set properties of the shared loader instance to control loading behaviour, or call its loading methods directly to preload images off-screen.
+AsyncImageView also provides an AsyncImageLoader class for advanced users. AsyncImageLoader manages the loading/downloading and queueing of image requests. Set properties of the shared loader instance to control loading behaviour, or call its loading methods directly to preload images off-screen.
 
 
 AsyncImageView properties
@@ -87,42 +80,6 @@ If YES, the image will crossfade in once it loads instead of appearing suddenly.
 The crossfade animation duration, in seconds. Defaults to 0.4.
 
 
-AsyncImageCache properties
----------------------------
-
-AsyncImageCache has the following property:
-
-    @property (nonatomic, assign) BOOL useImageNamed;
-    
-By default, AsyncImageCache will redirect any requests for images located in root of the application bundle to the UIImage imageNamed cache. This avoids duplication of images, but means you lose the ability to individually remove these images from cache. Set this property to NO to store all loaded images in the AsyncImageCache instead (this won't affect images loaded using the UIImage `imageNamed:` method).
-
-
-AsyncImageCache methods
--------------------------
-
-AsyncImageCache has the following methods:
-
-    + (AsyncImageCache *)sharedCache;
-
-Returns a shared, singleton instance of the cache. This method is not thread safe and should only be called on the main thread.
-
-    - (UIImage *)imageForURL:(NSURL *)URL;
-
-Returns the cached image for a given URL, or nil if there is no cached image for that URL.
-
-    - (void)setImage:(UIImage *)image forURL:(NSURL *)URL;
-
-Sets or replaces the cached image for a given URL. Note that replacing a cached image will not update the image for UIImageViews that are already using it.
-
-    - (void)removeImageForURL:(NSURL *)URL;
-    
-This removes a stored image from the cache. If an image for that URL was not already in the cache, this does nothing. This method does not check to see if any views are retaining the image, so removing an image and then subsequently re-loading it may result in duplicate copies of the image in memory.
-    
-    - (void)clearCache;
-
-This method clears the cache and is called automatically when a low memory warning occurs. The method does not merely remove all the cached images, it checks to see which ones are in use and only removes images that are not currently being retained by other objects. This avoids duplicate copies of images building up if there are frequent low-memory warnings.
-
-
 AsyncImageLoader notifications
 -------------------------------
 
@@ -142,7 +99,7 @@ The NSURL that the image was loaded from.
 
 - AsyncImageCacheKey
 
-The AsyncImageCache that the image was stored in.
+The NSCache that the image was stored in.
 
     AsyncImageLoadDidFail
     
@@ -162,9 +119,9 @@ AsyncImageLoader properties
 
 AsyncImageLoader has the following properties:
 
-    @property (nonatomic, strong) AsyncImageCache *cache;
+    @property (nonatomic, strong) NSCache *cache;
 
-The cache to be used for image load requests. You can change this value at any time and it will affect all subsequent load requests until it is changed again. By default this is set to `[AsyncImageCache sharedCache]`. Set this to nil to disable caching completely, or you can set it to a new AsyncImageCache instance or subclass for fine-grained cache control.
+The cache to be used for image load requests. You can change this value at any time and it will affect all subsequent load requests until it is changed again. By default this is set to `[AsyncImageLoader sharedCache]`. Set this to nil to disable caching completely, or you can set it to a new NSCache instance or subclass for fine-grained cache control.
 
     @property (nonatomic, assign) NSUInteger concurrentLoads;
 
@@ -238,4 +195,4 @@ If you want to asynchronously load a smaller thumbnail image while the main imag
 
 To detect when the image has finished loading, you can use NSNotificationCenter in conjunction with the `AsyncImageLoadDidFinish` notification, or you can use KVO (Key-Value Observation) to set up an observer on the UIImageView's image property. When the image has finished loading, the image will be set, and with KVO you can detect this and react accordingly.
 
-By default, all loaded images are cached, and if the app loads a large number of images, the cache will keep building up until a memory warning is triggered. You can avoid memory warnings by manually removing items from the cache according to your own maintenance logic. You can also disable caching either universally or for specific images by setting the shared AsyncImageLoader's cache property to `nil` before loading an image (set it back to `[AsyncImageCache sharedInstance]` to re-enable caching afterwards).
+By default, all loaded images are cached, and if the app loads a large number of images, the cache will keep building up until a memory warning is triggered. You can avoid memory warnings by manually removing items from the cache according to your own maintenance logic. You can also disable caching either universally or for specific images by setting the shared AsyncImageLoader's cache property to `nil` before loading an image (set it back to `[AsyncImageLoader sharedInstance]` to re-enable caching afterwards).

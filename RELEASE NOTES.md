@@ -1,3 +1,10 @@
+Version 1.4
+
+- Loading queue is now LIFO (Last-In, First-Out) for better performance
+- Removed AsyncImageCache class (replaced with ordinary NSCache)
+- Fixed some bugs when checking for duplicate items in UIImage cache
+- AsyncImageView no longer requires QuartzCore framework
+
 Version 1.3
 
 - Added additional effects options to AsyncImageView

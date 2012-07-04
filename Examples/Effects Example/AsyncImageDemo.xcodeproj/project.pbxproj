@@ -18,7 +18,6 @@
 		01C28C68144CC332005C3EB1 /* ImagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C28C66144CC331005C3EB1 /* ImagesViewController.m */; };
 		01C28C79144CE214005C3EB1 /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C28C77144CE213005C3EB1 /* ImageViewController.m */; };
 		01C28C7A144CE214005C3EB1 /* ImageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01C28C78144CE213005C3EB1 /* ImageViewController.xib */; };
-		B229D6BA14E9082E00978A25 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B229D6B914E9082E00978A25 /* QuartzCore.framework */; };
 		B229D6CF14E90AF400978A25 /* AsyncImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B229D6CE14E90AF400978A25 /* AsyncImageView.m */; };
 /* End PBXBuildFile section */
 
@@ -40,7 +39,6 @@
 		01C28C76144CE212005C3EB1 /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewController.h; sourceTree = "<group>"; };
 		01C28C77144CE213005C3EB1 /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewController.m; sourceTree = "<group>"; };
 		01C28C78144CE213005C3EB1 /* ImageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImageViewController.xib; sourceTree = "<group>"; };
-		B229D6B914E9082E00978A25 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B229D6CD14E90AF400978A25 /* AsyncImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageView.h; sourceTree = "<group>"; };
 		B229D6CE14E90AF400978A25 /* AsyncImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncImageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -50,7 +48,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B229D6BA14E9082E00978A25 /* QuartzCore.framework in Frameworks */,
 				01C28C35144CA9F8005C3EB1 /* UIKit.framework in Frameworks */,
 				01C28C37144CA9F8005C3EB1 /* Foundation.framework in Frameworks */,
 				01C28C39144CA9F8005C3EB1 /* CoreGraphics.framework in Frameworks */,
@@ -84,7 +81,6 @@
 				01C28C34144CA9F8005C3EB1 /* UIKit.framework */,
 				01C28C36144CA9F8005C3EB1 /* Foundation.framework */,
 				01C28C38144CA9F8005C3EB1 /* CoreGraphics.framework */,
-				B229D6B914E9082E00978A25 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -169,7 +165,7 @@
 		01C28C27144CA9F7005C3EB1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = 01C28C2A144CA9F7005C3EB1 /* Build configuration list for PBXProject "AsyncImageDemo" */;
 			compatibilityVersion = "Xcode 3.2";
