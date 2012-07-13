@@ -664,7 +664,7 @@ NSString *const AsyncImageErrorKey = @"error";
 - (void)setImageURL:(NSURL *)imageURL
 {
     super.imageURL = imageURL;
-    if (_showActivityIndicator && !self.image)
+    if (_showActivityIndicator && !self.image && imageURL)
     {
         if (_activityView == nil)
         {
