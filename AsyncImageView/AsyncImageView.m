@@ -474,8 +474,8 @@ NSString *const AsyncImageErrorKey = @"error";
     BOOL added = NO;
     for (NSUInteger i = 0; i < [_connections count]; i++)
     {
-        AsyncImageConnection *connection = [_connections objectAtIndex:i];
-        if (!connection.loading)
+        AsyncImageConnection *existingConnection = [_connections objectAtIndex:i];
+        if (!existingConnection.loading)
         {
             [_connections insertObject:connection atIndex:i];
             added = YES;
