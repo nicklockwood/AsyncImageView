@@ -44,6 +44,7 @@ NSString *const AsyncImageURLKey = @"URL";
 NSString *const AsyncImageCacheKey = @"cache";
 NSString *const AsyncImageErrorKey = @"error";
 
+CGFloat const AsyncImageRetinaScale = 2.0;
 
 @interface AsyncImageConnection : NSObject
 
@@ -178,7 +179,7 @@ NSString *const AsyncImageErrorKey = @"error";
 	{	
 		if (!_cancelled)
 		{
-            UIImage *image = [[UIImage alloc] initWithData:data];
+			UIImage *image = [UIImage imageWithData:data scale:AsyncImageRetinaScale];
 			if (image)
 			{
 				//add to cache (may be cached already but it doesn't matter)
