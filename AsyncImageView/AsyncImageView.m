@@ -461,7 +461,13 @@ NSString *const AsyncImageErrorKey = @"error";
     if (image)
     {
         [self cancelLoadingImagesForTarget:self action:success];
-        if (success) [target performSelectorOnMainThread:success withObject:image waitUntilDone:NO];
+		if (success)
+		{
+			dispatch_async(dispatch_get_main_queue(), ^(void)
+			{
+				objc_msgSend(target, success, image, URL);
+			});
+		}
         return;
     }
     
