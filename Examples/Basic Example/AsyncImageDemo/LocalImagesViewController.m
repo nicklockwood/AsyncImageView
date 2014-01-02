@@ -18,7 +18,7 @@
     
     //local image URLs
     NSMutableArray *URLs = [NSMutableArray array];
-    for (NSString *path in [imagePaths objectForKey:@"Local"])
+    for (NSString *path in imagePaths[@"Local"])
     {
         NSString *fullPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:path];
         [URLs addObject:[NSURL fileURLWithPath:fullPath]];

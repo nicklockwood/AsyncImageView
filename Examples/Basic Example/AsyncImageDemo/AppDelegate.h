@@ -10,6 +10,6 @@
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (nonatomic, retain) IBOutlet UIWindow *window;
+@property (nonatomic, strong) IBOutlet UIWindow *window;
 
 @end

@@ -18,6 +18,7 @@
 		01C28C68144CC332005C3EB1 /* ImagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C28C66144CC331005C3EB1 /* ImagesViewController.m */; };
 		01C28C79144CE214005C3EB1 /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C28C77144CE213005C3EB1 /* ImageViewController.m */; };
 		01C28C7A144CE214005C3EB1 /* ImageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01C28C78144CE213005C3EB1 /* ImageViewController.xib */; };
+		01E84B281731AB2B00E1D4F5 /* FXCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E84B271731AB2B00E1D4F5 /* FXCache.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B229D6CF14E90AF400978A25 /* AsyncImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B229D6CE14E90AF400978A25 /* AsyncImageView.m */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +40,8 @@
 		01C28C76144CE212005C3EB1 /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewController.h; sourceTree = "<group>"; };
 		01C28C77144CE213005C3EB1 /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewController.m; sourceTree = "<group>"; };
 		01C28C78144CE213005C3EB1 /* ImageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImageViewController.xib; sourceTree = "<group>"; };
+		01E84B261731AB2B00E1D4F5 /* FXCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXCache.h; sourceTree = "<group>"; };
+		01E84B271731AB2B00E1D4F5 /* FXCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXCache.m; sourceTree = "<group>"; };
 		B229D6CD14E90AF400978A25 /* AsyncImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageView.h; sourceTree = "<group>"; };
 		B229D6CE14E90AF400978A25 /* AsyncImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncImageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -60,6 +63,7 @@
 		01C28C25144CA9F7005C3EB1 = {
 			isa = PBXGroup;
 			children = (
+				01E84B251731AB2B00E1D4F5 /* FXCache */,
 				B229D6CC14E90AF400978A25 /* AsyncImageView */,
 				01C28C3A144CA9F8005C3EB1 /* AsyncImageDemo */,
 				01C28C33144CA9F8005C3EB1 /* Frameworks */,
@@ -129,6 +133,15 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		01E84B251731AB2B00E1D4F5 /* FXCache */ = {
+			isa = PBXGroup;
+			children = (
+				01E84B261731AB2B00E1D4F5 /* FXCache.h */,
+				01E84B271731AB2B00E1D4F5 /* FXCache.m */,
+			);
+			path = FXCache;
+			sourceTree = "<group>";
+		};
 		B229D6CC14E90AF400978A25 /* AsyncImageView */ = {
 			isa = PBXGroup;
 			children = (
@@ -165,7 +178,7 @@
 		01C28C27144CA9F7005C3EB1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = 01C28C2A144CA9F7005C3EB1 /* Build configuration list for PBXProject "AsyncImageDemo" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -208,6 +221,7 @@
 				01C28C68144CC332005C3EB1 /* ImagesViewController.m in Sources */,
 				01C28C79144CE214005C3EB1 /* ImageViewController.m in Sources */,
 				B229D6CF14E90AF400978A25 /* AsyncImageView.m in Sources */,
+				01E84B281731AB2B00E1D4F5 /* FXCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,6 +245,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -244,6 +262,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				SDKROOT = iphoneos;
@@ -256,12 +275,17 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.2;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";

@@ -12,13 +12,11 @@
 
 @implementation SettingsViewController
 
-@synthesize cacheEnabledSwitch;
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    cacheEnabledSwitch.on = ([AsyncImageLoader sharedLoader].cache != nil);
+    self.cacheEnabledSwitch.on = ([AsyncImageLoader sharedLoader].cache != nil);
 }
 
 - (IBAction)toggleCache:(UISwitch *)sender
@@ -33,10 +31,5 @@
     self.cacheEnabledSwitch = nil;
 }
 
-- (void)dealloc
-{
-    [cacheEnabledSwitch release];
-    [super dealloc];
-}
 
 @end

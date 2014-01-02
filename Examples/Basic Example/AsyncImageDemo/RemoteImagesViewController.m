@@ -12,13 +12,14 @@
 
 - (void)awakeFromNib
 {
+
     //get image URLs
     NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Images" ofType:@"plist"];
     NSDictionary *imagePaths = [NSDictionary dictionaryWithContentsOfFile:plistPath];
     
     //remote image URLs
     NSMutableArray *URLs = [NSMutableArray array];
-    for (NSString *path in [imagePaths objectForKey:@"Remote"])
+    for (NSString *path in imagePaths[@"Remote"])
     {
         NSURL *URL = [NSURL URLWithString:path];
         if (URL)

@@ -10,8 +10,8 @@
 
 @interface SettingsViewController : UIViewController
 
-@property (nonatomic, retain) IBOutlet UISwitch *cacheEnabledSwitch;
+@property (nonatomic, strong) IBOutlet UISwitch *cacheEnabledSwitch;
 
-- (IBAction)toggleCache:(id)sender;
+- (IBAction)toggleCache:(UISwitch *)sender;
 
 @end

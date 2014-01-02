@@ -13,8 +13,6 @@
 
 @implementation ImagesViewController
 
-@synthesize imageURLs;
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -31,9 +29,9 @@
     self.view = nil;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (NSInteger)tableView:(__unused UITableView *)tableView numberOfRowsInSection:(__unused NSInteger)section
 {
-    return [imageURLs count];
+    return (NSInteger)[self.imageURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -44,7 +42,7 @@
     if (cell == nil)
     {
         //create new cell
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         
         //common settings
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -63,28 +61,22 @@
     cell.imageView.image = [UIImage imageNamed:@"Placeholder.png"];
     
     //load the image
-    cell.imageView.imageURL = [imageURLs objectAtIndex:indexPath.row];
+    cell.imageView.imageURL = self.imageURLs[indexPath.row];
     
     //display image path
-    cell.textLabel.text = [[[imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
+    cell.textLabel.text = [[(NSURL *)self.imageURLs[indexPath.row] path] lastPathComponent];
     
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(__unused UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
     ImageViewController *viewController = [[ImageViewController alloc] initWithNibName:@"ImageViewController" bundle:nil];
     [viewController view]; // load view
-    viewController.imageView.imageURL = [imageURLs objectAtIndex:indexPath.row];
-    viewController.title = [[[imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
+    viewController.imageView.imageURL = self.imageURLs[indexPath.row];
+    viewController.title = [[(NSURL *)self.imageURLs[indexPath.row] path] lastPathComponent];
     [self.navigationController pushViewController:viewController animated:YES];
-    [viewController release];
 }
 
-- (void)dealloc
-{
-    [imageURLs release];
-    [super dealloc];
-}
 
 @end

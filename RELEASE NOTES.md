@@ -1,3 +1,13 @@
+Version 1.5
+
+- Now works correctly on ARM64
+- Now requires ARC (see README for details)
+- Loaded images are now decompressed prior to drawing to avoid stutter
+- Spinner no longer shows if nil URL is set
+- Removed redundant crossfadeImages property
+- Now conforms to -Weverything warning level
+- Added podspec
+
 Version 1.4
 
 - Loading queue is now LIFO (Last-In, First-Out) for better performance

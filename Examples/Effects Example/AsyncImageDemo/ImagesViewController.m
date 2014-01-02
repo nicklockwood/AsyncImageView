@@ -9,11 +9,18 @@
 #import "ImagesViewController.h"
 #import "ImageViewController.h"
 #import "AsyncImageView.h"
+#import "FXCache.h"
 
 
 @implementation ImagesViewController
 
 @synthesize imageURLs;
+
++ (void)initialize
+{
+    [AsyncImageLoader sharedLoader].cache = [[FXCache alloc] init];
+    [AsyncImageLoader sharedLoader].cache.name = @"AsyncImages2";
+}
 
 - (void)viewDidLoad
 {

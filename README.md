@@ -11,9 +11,9 @@ The library can also be used to load and cache images independently of a UIImage
 Supported OS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 5.0 / Mac OS 10.7 (Xcode 4.2, Apple LLVM compiler 3.0)
-* Earliest supported deployment target - iOS 4.3 / Mac OS 10.6
-* Earliest compatible deployment target - iOS 4.0 / Mac OS 10.6
+* Supported build target - iOS 7.0 (Xcode 5.0, Apple LLVM compiler 5.0)
+* Earliest supported deployment target - iOS 5.0
+* Earliest compatible deployment target - iOS 4.3
 
 NOTE: 'Supported' means that the library has been tested with this version. 'Compatible' means that the library should work on this iOS version (i.e. it doesn't rely on any unavailable SDK features) but is no longer being tested for compatibility and may require tweaking or bug fixes to run correctly.
 
@@ -21,7 +21,9 @@ NOTE: 'Supported' means that the library has been tested with this version. 'Com
 ARC Compatibility
 ------------------
 
-AsyncImageView makes use of the ARC Helper library to automatically work with both ARC and non-ARC projects through conditional compilation. There is no need to exclude AsyncImageView files from the ARC validation process, or to convert AsyncImageView using the ARC conversion tool.
+As of version 1.5, AsyncImageView requires ARC. If you wish to use AsyncImageView in a non-ARC project, just add the -fobjc-arc compiler flag to the AsyncImageView.m file. To do this, go to the Build Phases tab in your target settings, open the Compile Sources group, double-click AsyncImageView.m in the list and type -fobjc-arc into the popover.
+
+If you wish to convert your whole project to ARC, comment out the #error line in AsyncImageView.m, then run the Edit > Refactor > Convert to Objective-C ARC... tool in Xcode and make sure all files that you wish to use ARC for (including AsyncImageView.m) are checked.
 
 
 Thread Safety
@@ -71,13 +73,9 @@ If YES, the AsyncImageView will display a loading spinner when the imageURL is s
     
 The style that will be used for the UIActivityIndicator (if enabled). Note that this value should bet set *before* setting the imageURL. Setting this value when loading is already in progress will cause the spinner to  disappear.
     
-    @property (nonatomic, assign) BOOL crossfadeImages;
-
-If YES, the image will crossfade in once it loads instead of appearing suddenly.  Defaults to YES.
-
     @property (nonatomic, assign) NSTimeInterval crossfadeDuration;
-    
-The crossfade animation duration, in seconds. Defaults to 0.4.
+
+The crossfade animation duration, in seconds. If value is greater than 0, the image will crossfade in once it loads instead of appearing suddenly. Defaults to 0.4.
 
 
 AsyncImageLoader notifications
