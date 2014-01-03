@@ -1,3 +1,8 @@
+Version 1.5.1
+
+- Fixed accidental recursion
+- Fixed mismatched selector
+
 Version 1.5
 
 - Now works correctly on ARM64

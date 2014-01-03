@@ -1,7 +1,7 @@
 //
 //  AsyncImageView.m
 //
-//  Version 1.5
+//  Version 1.5.1
 //
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright (c) 2011 Charcoal Design
@@ -427,7 +427,13 @@ NSString *const AsyncImageErrorKey = @"error";
     if (image)
     {
         [self cancelLoadingImagesForTarget:self action:success];
-        if (success) [target performSelectorOnMainThread:success withObject:image waitUntilDone:NO];
+        if (success)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                
+                ((void (*)(id, SEL, id, id))objc_msgSend)(target, success, image, URL);
+            });
+        }
         return;
     }
     
