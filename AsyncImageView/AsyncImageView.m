@@ -641,7 +641,7 @@ NSString *const AsyncImageErrorKey = @"error";
 
 - (void)setActivityIndicatorStyle:(UIActivityIndicatorViewStyle)style
 {
-	self.activityIndicatorStyle = style;
+	_activityIndicatorStyle = style;
 	[self.activityView removeFromSuperview];
 	self.activityView = nil;
 }
