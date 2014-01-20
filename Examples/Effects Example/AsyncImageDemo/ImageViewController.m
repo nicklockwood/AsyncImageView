@@ -10,12 +10,4 @@
 
 @implementation ImageViewController
 
-@synthesize imageView;
-
-- (void)dealloc
-{
-    [imageView release];
-    [super dealloc];
-}
-
 @end

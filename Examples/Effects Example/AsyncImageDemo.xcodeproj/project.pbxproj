@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01A657D8188D5B6C0060550D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01A657D7188D5B6C0060550D /* Default-568h@2x.png */; };
 		01C28C35144CA9F8005C3EB1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C28C34144CA9F8005C3EB1 /* UIKit.framework */; };
 		01C28C37144CA9F8005C3EB1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C28C36144CA9F8005C3EB1 /* Foundation.framework */; };
 		01C28C39144CA9F8005C3EB1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01C28C38144CA9F8005C3EB1 /* CoreGraphics.framework */; };
@@ -18,11 +19,11 @@
 		01C28C68144CC332005C3EB1 /* ImagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C28C66144CC331005C3EB1 /* ImagesViewController.m */; };
 		01C28C79144CE214005C3EB1 /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C28C77144CE213005C3EB1 /* ImageViewController.m */; };
 		01C28C7A144CE214005C3EB1 /* ImageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 01C28C78144CE213005C3EB1 /* ImageViewController.xib */; };
-		01E84B281731AB2B00E1D4F5 /* FXCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E84B271731AB2B00E1D4F5 /* FXCache.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B229D6CF14E90AF400978A25 /* AsyncImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B229D6CE14E90AF400978A25 /* AsyncImageView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		01A657D7188D5B6C0060550D /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		01C28C30144CA9F8005C3EB1 /* AsyncImageDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AsyncImageDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01C28C34144CA9F8005C3EB1 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		01C28C36144CA9F8005C3EB1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -40,8 +41,6 @@
 		01C28C76144CE212005C3EB1 /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewController.h; sourceTree = "<group>"; };
 		01C28C77144CE213005C3EB1 /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewController.m; sourceTree = "<group>"; };
 		01C28C78144CE213005C3EB1 /* ImageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImageViewController.xib; sourceTree = "<group>"; };
-		01E84B261731AB2B00E1D4F5 /* FXCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXCache.h; sourceTree = "<group>"; };
-		01E84B271731AB2B00E1D4F5 /* FXCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXCache.m; sourceTree = "<group>"; };
 		B229D6CD14E90AF400978A25 /* AsyncImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageView.h; sourceTree = "<group>"; };
 		B229D6CE14E90AF400978A25 /* AsyncImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncImageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -63,7 +62,6 @@
 		01C28C25144CA9F7005C3EB1 = {
 			isa = PBXGroup;
 			children = (
-				01E84B251731AB2B00E1D4F5 /* FXCache */,
 				B229D6CC14E90AF400978A25 /* AsyncImageView */,
 				01C28C3A144CA9F8005C3EB1 /* AsyncImageDemo */,
 				01C28C33144CA9F8005C3EB1 /* Frameworks */,
@@ -102,6 +100,7 @@
 		01C28C3B144CA9F8005C3EB1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				01A657D7188D5B6C0060550D /* Default-568h@2x.png */,
 				01C28C63144CC19F005C3EB1 /* MainWindow.xib */,
 				01C28C3C144CA9F8005C3EB1 /* AsyncImageDemo-Info.plist */,
 				01C28C3D144CA9F8005C3EB1 /* InfoPlist.strings */,
@@ -131,15 +130,6 @@
 				01C28C5C144CBF99005C3EB1 /* Images.plist */,
 			);
 			name = Resources;
-			sourceTree = "<group>";
-		};
-		01E84B251731AB2B00E1D4F5 /* FXCache */ = {
-			isa = PBXGroup;
-			children = (
-				01E84B261731AB2B00E1D4F5 /* FXCache.h */,
-				01E84B271731AB2B00E1D4F5 /* FXCache.m */,
-			);
-			path = FXCache;
 			sourceTree = "<group>";
 		};
 		B229D6CC14E90AF400978A25 /* AsyncImageView */ = {
@@ -205,6 +195,7 @@
 				01C28C3F144CA9F8005C3EB1 /* InfoPlist.strings in Resources */,
 				01C28C5D144CBF99005C3EB1 /* Images.plist in Resources */,
 				01C28C64144CC19F005C3EB1 /* MainWindow.xib in Resources */,
+				01A657D8188D5B6C0060550D /* Default-568h@2x.png in Resources */,
 				01C28C7A144CE214005C3EB1 /* ImageViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -221,7 +212,6 @@
 				01C28C68144CC332005C3EB1 /* ImagesViewController.m in Sources */,
 				01C28C79144CE214005C3EB1 /* ImageViewController.m in Sources */,
 				B229D6CF14E90AF400978A25 /* AsyncImageView.m in Sources */,
-				01E84B281731AB2B00E1D4F5 /* FXCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,7 +234,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -274,7 +264,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;

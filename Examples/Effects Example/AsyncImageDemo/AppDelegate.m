@@ -11,19 +11,10 @@
 
 @implementation AppDelegate
 
-@synthesize window;
-
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [window makeKeyAndVisible];
+    [_window makeKeyAndVisible];
     return YES;
-}
-
-- (void)dealloc
-{
-    [window release];
-    [super dealloc];
 }
 
 @end

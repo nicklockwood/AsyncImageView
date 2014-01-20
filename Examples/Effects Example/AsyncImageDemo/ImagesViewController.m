@@ -9,18 +9,9 @@
 #import "ImagesViewController.h"
 #import "ImageViewController.h"
 #import "AsyncImageView.h"
-#import "FXCache.h"
 
 
 @implementation ImagesViewController
-
-@synthesize imageURLs;
-
-+ (void)initialize
-{
-    [AsyncImageLoader sharedLoader].cache = [[FXCache alloc] init];
-    [AsyncImageLoader sharedLoader].cache.name = @"AsyncImages2";
-}
 
 - (void)viewDidLoad
 {
@@ -60,7 +51,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [imageURLs count];
+    return [_imageURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -73,7 +64,7 @@
     if (cell == nil)
     {
         //create new cell
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 		
 		//add AsyncImageView to cell
 		AsyncImageView *imageView = [[AsyncImageView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 44.0f, 44.0f)];
@@ -81,7 +72,6 @@
 		imageView.clipsToBounds = YES;
 		imageView.tag = IMAGE_VIEW_TAG;
 		[cell addSubview:imageView];
-		[imageView release];
 		
 		//common settings
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -97,10 +87,10 @@
     [[AsyncImageLoader sharedLoader] cancelLoadingImagesForTarget:imageView];
     
     //load the image
-    imageView.imageURL = [imageURLs objectAtIndex:indexPath.row];
+    imageView.imageURL = [_imageURLs objectAtIndex:indexPath.row];
         
     //display image path
-    cell.textLabel.text = [[[imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
+    cell.textLabel.text = [[[_imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
 
     return cell;
 }
@@ -109,16 +99,9 @@
 {
     ImageViewController *viewController = [[ImageViewController alloc] initWithNibName:@"ImageViewController" bundle:nil];
     [viewController view]; // load view
-    viewController.imageView.imageURL = [imageURLs objectAtIndex:indexPath.row];
-    viewController.title = [[[imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
+    viewController.imageView.imageURL = [_imageURLs objectAtIndex:indexPath.row];
+    viewController.title = [[[_imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
     [self.navigationController pushViewController:viewController animated:YES];
-    [viewController release];
-}
-
-- (void)dealloc
-{
-    [imageURLs release];
-    [super dealloc];
 }
 
 @end
