@@ -44,6 +44,7 @@ extern NSString *const AsyncImageURLKey;
 extern NSString *const AsyncImageCacheKey;
 extern NSString *const AsyncImageErrorKey;
 
+typedef void(^AsyncImageLoadCallback)(Boolean success);
 
 @interface AsyncImageLoader : NSObject
 
@@ -54,6 +55,7 @@ extern NSString *const AsyncImageErrorKey;
 @property (nonatomic, assign) NSUInteger concurrentLoads;
 @property (nonatomic, assign) NSTimeInterval loadingTimeout;
 
+- (void)loadImageWithURL:(NSURL *)URL target:(id)target success:(SEL)success failure:(SEL)failure callback:(AsyncImageLoadCallback)callback;
 - (void)loadImageWithURL:(NSURL *)URL target:(id)target success:(SEL)success failure:(SEL)failure;
 - (void)loadImageWithURL:(NSURL *)URL target:(id)target action:(SEL)action;
 - (void)loadImageWithURL:(NSURL *)URL;
@@ -72,6 +74,8 @@ extern NSString *const AsyncImageErrorKey;
 
 @property (nonatomic, strong) NSURL *imageURL;
 
+- (void)imageURL:(NSURL *)imageURL withCallback:(AsyncImageLoadCallback)callback;
+
 @end
 
 
@@ -80,6 +84,8 @@ extern NSString *const AsyncImageErrorKey;
 @property (nonatomic, assign) BOOL showActivityIndicator;
 @property (nonatomic, assign) UIActivityIndicatorViewStyle activityIndicatorStyle;
 @property (nonatomic, assign) NSTimeInterval crossfadeDuration;
+
+-(void) disableCrossfade;
 
 @end
 
