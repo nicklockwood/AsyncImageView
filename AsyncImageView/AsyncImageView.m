@@ -470,7 +470,6 @@ NSString *const AsyncImageErrorKey = @"error";
                 ((void (*)(id, SEL, id, id, AsyncImageLoadCallback))objc_msgSend)(target, success, image, URL, callback);
             });
         }
-        callback(YES);
         return;
     }
     
