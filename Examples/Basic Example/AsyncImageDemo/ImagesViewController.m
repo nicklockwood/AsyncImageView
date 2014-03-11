@@ -61,10 +61,10 @@
     cell.imageView.image = [UIImage imageNamed:@"Placeholder.png"];
     
     //load the image
-    cell.imageView.imageURL = self.imageURLs[indexPath.row];
+    cell.imageView.imageURL = self.imageURLs[(NSUInteger)indexPath.row];
     
     //display image path
-    cell.textLabel.text = [[(NSURL *)self.imageURLs[indexPath.row] path] lastPathComponent];
+    cell.textLabel.text = [[(NSURL *)self.imageURLs[(NSUInteger)indexPath.row] path] lastPathComponent];
     
     return cell;
 }
@@ -73,8 +73,8 @@
 {
     ImageViewController *viewController = [[ImageViewController alloc] initWithNibName:@"ImageViewController" bundle:nil];
     [viewController view]; // load view
-    viewController.imageView.imageURL = self.imageURLs[indexPath.row];
-    viewController.title = [[(NSURL *)self.imageURLs[indexPath.row] path] lastPathComponent];
+    viewController.imageView.imageURL = self.imageURLs[(NSUInteger)indexPath.row];
+    viewController.title = [[(NSURL *)self.imageURLs[(NSUInteger)indexPath.row] path] lastPathComponent];
     [self.navigationController pushViewController:viewController animated:YES];
 }
 

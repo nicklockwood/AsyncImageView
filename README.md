@@ -11,7 +11,7 @@ The library can also be used to load and cache images independently of a UIImage
 Supported OS & SDK Versions
 -----------------------------
 
-* Supported build target - iOS 7.0 (Xcode 5.0, Apple LLVM compiler 5.0)
+* Supported build target - iOS 7.1 (Xcode 5.1, Apple LLVM compiler 5.1)
 * Earliest supported deployment target - iOS 5.0
 * Earliest compatible deployment target - iOS 4.3
 
@@ -194,3 +194,75 @@ If you want to asynchronously load a smaller thumbnail image while the main imag
 To detect when the image has finished loading, you can use NSNotificationCenter in conjunction with the `AsyncImageLoadDidFinish` notification, or you can use KVO (Key-Value Observation) to set up an observer on the UIImageView's image property. When the image has finished loading, the image will be set, and with KVO you can detect this and react accordingly.
 
 By default, all loaded images are cached, and if the app loads a large number of images, the cache will keep building up until a memory warning is triggered. You can avoid memory warnings by manually removing items from the cache according to your own maintenance logic. You can also disable caching either universally or for specific images by setting the shared AsyncImageLoader's cache property to `nil` before loading an image (set it back to `[AsyncImageLoader sharedInstance]` to re-enable caching afterwards).
+
+
+Release Notes
+----------------
+
+Version 1.5.1
+
+- Fixed accidental recursion
+- Fixed mismatched selector
+
+Version 1.5
+
+- Now works correctly on ARM64
+- Now requires ARC (see README for details)
+- Loaded images are now decompressed prior to drawing to avoid stutter
+- Spinner no longer shows if nil URL is set
+- Removed redundant crossfadeImages property
+- Now conforms to -Weverything warning level
+- Added podspec
+
+Version 1.4
+
+- Loading queue is now LIFO (Last-In, First-Out) for better performance
+- Removed AsyncImageCache class (replaced with ordinary NSCache)
+- Fixed some bugs when checking for duplicate items in UIImage cache
+- AsyncImageView no longer requires QuartzCore framework
+
+Version 1.3
+
+- Added additional effects options to AsyncImageView
+- Added additional AsyncImageLoader methods
+- Fixed broken example
+- Added Effects example
+- AsyncImageView now fades in the first time image is set
+- Fixed memory leak in AsyncImageView
+- Update ARC Helper
+- Added new AsyncImageView class with loading spinner and crossfade effect.
+- Fixed crash when setting a nil imageURL.
+- Fixed crash when image fails to load.
+- Now requires the QuartzCore framework.
+- Now requires iOS 4.x
+
+Version 1.2.3
+
+- Improved queuing behaviour so cached images aren't blocked from appearing by slow loading images in the queue.
+- Added example project.
+
+Version 1.2.2
+
+- Fixed crash when accessing imageURL that has already been released.
+- Fixed some thread concurrency issues
+
+Version 1.2.1
+
+- Fixed crash when attempting to load a corrupt image, or a URL that isn't a valid image file.
+
+Version 1.2
+
+- Images are now automatically decompressed on a background thread after loading before being displayed. This reduces stuttering when displaying the images in a scrolling view such as a UITableView or carousel.
+- Images located in the root of the application bundle will now be stored in the UIImage imageNamed cache instead of in the AsyncImageCache by default. This avoids duplication of images loaded via different mechanisms.
+- It is now possible to disable caching, or use multiple different caches for different images.
+
+Version 1.1
+
+- AsyncImageView is now a category on UIImageView instead of a standalone class, making it easier to use with existing code or classes.
+- Now uses asynchronous NSURLConnections for loading, allowing image loading to be cancelled partway through.
+- Loaded images are now cached in memory, and de-duplication is handled automatically.
+- Added public AsyncImageCache and AsyncImageLoader classes, for fine-grained control over loading and caching.
+
+Version 1.0
+
+- Initial release
