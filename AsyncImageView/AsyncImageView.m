@@ -50,6 +50,7 @@ NSString *const AsyncImageURLKey = @"URL";
 NSString *const AsyncImageCacheKey = @"cache";
 NSString *const AsyncImageErrorKey = @"error";
 
+CGFloat const AsyncImageRetinaScale = 2.0;
 
 @interface AsyncImageConnection : NSObject
 
@@ -172,7 +173,7 @@ NSString *const AsyncImageErrorKey = @"error";
 	{	
 		if (!self.cancelled)
 		{
-            UIImage *image = [[UIImage alloc] initWithData:data];
+			UIImage *image = [UIImage imageWithData:data scale:AsyncImageRetinaScale];
 			if (image)
 			{
                 //redraw to prevent deferred decompression
