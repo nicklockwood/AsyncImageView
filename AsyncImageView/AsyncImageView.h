@@ -35,6 +35,12 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wobjc-missing-property-synthesis"
 
+@protocol CustomAsyncImageViewActivityProtocol <NSObject>
+
+-(void)updateProgress:(float)percent;
+-(void)startAnimating;
+-(void)stopAnimating;
+@end
 
 extern NSString *const AsyncImageLoadDidFinish;
 extern NSString *const AsyncImageLoadDidFail;
@@ -76,11 +82,11 @@ extern NSString *const AsyncImageErrorKey;
 
 
 @interface AsyncImageView : UIImageView
-
+@property (nonatomic) UIView<CustomAsyncImageViewActivityProtocol>* customActivityView;
 @property (nonatomic, assign) BOOL showActivityIndicator;
 @property (nonatomic, assign) UIActivityIndicatorViewStyle activityIndicatorStyle;
 @property (nonatomic, assign) NSTimeInterval crossfadeDuration;
-
+@property (nonatomic, strong) NSURL *currentImageURL;
 @end
 
 
