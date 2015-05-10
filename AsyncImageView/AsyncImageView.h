@@ -54,12 +54,15 @@ extern NSString *const AsyncImageErrorKey;
 @property (nonatomic, assign) NSUInteger concurrentLoads;
 @property (nonatomic, assign) NSTimeInterval loadingTimeout;
 
+- (void)loadImageWithURL:(NSURL *)URL successBlock:(void (^)(UIImage *image))successBlock failureBlock:(void(^)(NSError *error))failureBlock; // New method for blocks by Fraser Scott-Morrison
 - (void)loadImageWithURL:(NSURL *)URL target:(id)target success:(SEL)success failure:(SEL)failure;
 - (void)loadImageWithURL:(NSURL *)URL target:(id)target action:(SEL)action;
 - (void)loadImageWithURL:(NSURL *)URL;
+- (void)cancelLoadingURL:(NSURL *)URL actionBlock:(void (^)(UIImage *image))successBlock; // New method for blocks by Fraser Scott-Morrison
 - (void)cancelLoadingURL:(NSURL *)URL target:(id)target action:(SEL)action;
 - (void)cancelLoadingURL:(NSURL *)URL target:(id)target;
 - (void)cancelLoadingURL:(NSURL *)URL;
+- (void)cancelLoadingImagesForTarget:(id)target actionBlock:(void (^)(UIImage *image))successBlock; // New method for blocks by Fraser Scott-Morrison
 - (void)cancelLoadingImagesForTarget:(id)target action:(SEL)action;
 - (void)cancelLoadingImagesForTarget:(id)target;
 - (NSURL *)URLForTarget:(id)target action:(SEL)action;
@@ -72,6 +75,7 @@ extern NSString *const AsyncImageErrorKey;
 
 @property (nonatomic, strong) NSURL *imageURL;
 
+- (void)setImageURL:(NSURL *)imageURL successBlock:(void (^)(UIImage *image))successBlock failureBlock:(void(^)(NSError *error))failureBlock; // New method for blocks by Fraser Scott-Morrison
 @end
 
 
@@ -80,6 +84,8 @@ extern NSString *const AsyncImageErrorKey;
 @property (nonatomic, assign) BOOL showActivityIndicator;
 @property (nonatomic, assign) UIActivityIndicatorViewStyle activityIndicatorStyle;
 @property (nonatomic, assign) NSTimeInterval crossfadeDuration;
+
+- (void)setImageURL:(NSURL *)imageURL successBlock:(void (^)(UIImage *image))successBlock failureBlock:(void(^)(NSError *error))failureBlock; // New method for blocks by Fraser Scott-Morrison
 
 @end
 
