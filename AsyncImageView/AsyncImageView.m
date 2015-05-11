@@ -196,7 +196,7 @@ NSString *const AsyncImageErrorKey = @"error";
     {
         if (!self.cancelled)
         {
-            UIImage *image = [[UIImage alloc] initWithData:data];
+            UIImage *image = [[UIImage alloc] initWithData:data scale:2.0f];
             if (image)
             {
                 //redraw to prevent deferred decompression
