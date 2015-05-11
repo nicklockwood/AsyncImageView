@@ -58,6 +58,7 @@ NSString *const AsyncImageErrorKey = @"error";
 @property (nonatomic, strong) NSURL *URL;
 @property (nonatomic, strong) NSCache *cache;
 @property (nonatomic, strong) id target;
+@property (nonatomic) BOOL doRetry;
 @property (nonatomic, assign) SEL success;
 @property (nonatomic, assign) SEL failure;
 @property (nonatomic, copy) void (^successBlock)(UIImage *image);
@@ -432,18 +433,24 @@ NSString *const AsyncImageErrorKey = @"error";
             //cancel connection (in case it's a duplicate)
             [connection cancel];
             
-            //perform failure action
-            if (connection.failure)
-            {
-                NSError *error = (notification.userInfo)[AsyncImageErrorKey];
-                ((void (*)(id, SEL, id, id))objc_msgSend)(connection.target, connection.failure, error, URL);
-            }
-            else if (connection.failureBlock) {
-                connection.failureBlock([NSError errorWithDomain:@"An image failed to load" code:0 userInfo:nil]);
-            }
-            
             //remove from queue
             [self.connections removeObjectAtIndex:(NSUInteger)i];
+            
+            if (connection.doRetry) {
+                // retry once
+                [self loadImageWithURL:connection.URL doRetry:NO successBlock:connection.successBlock failureBlock:connection.failureBlock];
+            }
+            else {
+                //perform failure action
+                if (connection.failure)
+                {
+                    NSError *error = (notification.userInfo)[AsyncImageErrorKey];
+                    ((void (*)(id, SEL, id, id))objc_msgSend)(connection.target, connection.failure, error, URL);
+                }
+                else if (connection.failureBlock) {
+                    connection.failureBlock([NSError errorWithDomain:@"An image failed to load" code:0 userInfo:nil]);
+                }
+            }
         }
     }
     
@@ -451,8 +458,13 @@ NSString *const AsyncImageErrorKey = @"error";
     [self updateQueue];
 }
 
-// New method for blocks by Fraser Scott-Morrison
+// New method for blocks by Fraser Scott-Morrison. Will automatically try to reload image (once) if it fails
 - (void)loadImageWithURL:(NSURL *)URL successBlock:(void (^)(UIImage *image))successBlock failureBlock:(void(^)(NSError *error))failureBlock {
+    [self loadImageWithURL:URL doRetry:YES successBlock:successBlock failureBlock:failureBlock];
+}
+
+// New method for blocks by Fraser Scott-Morrison
+- (void)loadImageWithURL:(NSURL *)URL doRetry:(BOOL)doRetry successBlock:(void (^)(UIImage *image))successBlock failureBlock:(void(^)(NSError *error))failureBlock {
     //check cache
     UIImage *image = [self.cache objectForKey:URL];
     if (image)
@@ -472,6 +484,7 @@ NSString *const AsyncImageErrorKey = @"error";
                                                                            cache:self.cache
                                                                     successBlock:successBlock
                                                                     failureBlock:failureBlock];
+    connection.doRetry = doRetry;
     BOOL added = NO;
     for (NSUInteger i = 0; i < [self.connections count]; i++)
     {
