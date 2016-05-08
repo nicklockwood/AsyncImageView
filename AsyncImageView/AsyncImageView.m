@@ -601,6 +601,7 @@ NSString *const AsyncImageErrorKey = @"error";
 {
 	self.showActivityIndicator = (self.image == nil);
 	self.activityIndicatorStyle = UIActivityIndicatorViewStyleGray;
+	self.activityIndicatorColor = [UIColor blackColor];
 	self.crossfadeDuration = 0.4;
 }
 
@@ -636,6 +637,7 @@ NSString *const AsyncImageErrorKey = @"error";
         if (self.activityView == nil)
         {
             self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:self.activityIndicatorStyle];
+			self.activityView.color = self.activityIndicatorColor;
             self.activityView.hidesWhenStopped = YES;
             self.activityView.center = CGPointMake(self.bounds.size.width / 2.0f, self.bounds.size.height / 2.0f);
             self.activityView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
@@ -648,6 +650,13 @@ NSString *const AsyncImageErrorKey = @"error";
 - (void)setActivityIndicatorStyle:(UIActivityIndicatorViewStyle)style
 {
 	_activityIndicatorStyle = style;
+	[self.activityView removeFromSuperview];
+	self.activityView = nil;
+}
+
+- (void)setActivityIndicatorColor:(UIColor *)color
+{
+	_activityIndicatorColor = color;
 	[self.activityView removeFromSuperview];
 	self.activityView = nil;
 }

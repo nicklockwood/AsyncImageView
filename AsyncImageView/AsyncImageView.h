@@ -79,6 +79,7 @@ extern NSString *const AsyncImageErrorKey;
 
 @property (nonatomic, assign) BOOL showActivityIndicator;
 @property (nonatomic, assign) UIActivityIndicatorViewStyle activityIndicatorStyle;
+@property (nonatomic, assign) UIColor *activityIndicatorColor;
 @property (nonatomic, assign) NSTimeInterval crossfadeDuration;
 
 @end
