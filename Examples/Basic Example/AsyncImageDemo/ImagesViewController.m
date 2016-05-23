@@ -31,7 +31,7 @@
 
 - (NSInteger)tableView:(__unused UITableView *)tableView numberOfRowsInSection:(__unused NSInteger)section
 {
-    return (NSInteger)[self.imageURLs count];
+    return (NSInteger)self.imageURLs.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -48,7 +48,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
         cell.imageView.contentMode = UIViewContentModeScaleAspectFill;
-        cell.imageView.frame = CGRectMake(0.0f, 0.0f, 44.0f, 44.0f);
+        cell.imageView.frame = CGRectMake(0.0, 0.0, 44.0, 44.0);
         cell.imageView.clipsToBounds = YES;
     }
     else
@@ -64,7 +64,7 @@
     cell.imageView.imageURL = self.imageURLs[(NSUInteger)indexPath.row];
     
     //display image path
-    cell.textLabel.text = [[(NSURL *)self.imageURLs[(NSUInteger)indexPath.row] path] lastPathComponent];
+    cell.textLabel.text = self.imageURLs[(NSUInteger)indexPath.row].path.lastPathComponent;
     
     return cell;
 }
@@ -72,9 +72,9 @@
 - (void)tableView:(__unused UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
     ImageViewController *viewController = [[ImageViewController alloc] initWithNibName:@"ImageViewController" bundle:nil];
-    [viewController view]; // load view
+    (void)viewController.view; // load view
     viewController.imageView.imageURL = self.imageURLs[(NSUInteger)indexPath.row];
-    viewController.title = [[(NSURL *)self.imageURLs[(NSUInteger)indexPath.row] path] lastPathComponent];
+    viewController.title = self.imageURLs[(NSUInteger)indexPath.row].path.lastPathComponent;
     [self.navigationController pushViewController:viewController animated:YES];
 }
 

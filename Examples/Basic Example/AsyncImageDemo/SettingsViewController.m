@@ -24,12 +24,4 @@
     [AsyncImageLoader sharedLoader].cache = (sender.on)? [AsyncImageLoader defaultCache]: nil;
 }
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    
-    self.cacheEnabledSwitch = nil;
-}
-
-
 @end

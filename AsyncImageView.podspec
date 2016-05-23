@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "AsyncImageView"
-  s.version      = "1.5.1"
+  s.version      = "1.6"
   s.summary      = "AsyncImageView is an extension of UIImageView for loading and displaying images asynchronously on iOS so that they do not lock up the UI."
   
   s.description  = "AsyncImageView includes both a simple category on UIImageView for loading and displaying images asynchronously on iOS so that they do not lock up the UI, and a UIImageView subclass for more advanced features. AsyncImageView works with URLs so it can be used with either local or remote files.
@@ -12,9 +12,9 @@ Pod::Spec.new do |s|
   s.homepage     = "http://charcoaldesign.co.uk/source/cocoa#asyncimageview"
   s.license      = { :type => 'zlib', :file => 'LICENCE.md' }
   s.author       = { "Nick Lockwood" => "support@charcoaldesign.co.uk" }
-  s.source       = { :git => "https://github.com/nicklockwood/AsyncImageView.git", :tag => "1.5.1" }
+  s.source       = { :git => "https://github.com/nicklockwood/AsyncImageView.git", :tag => "1.6" }
 
-  s.platform     = :ios, '4.3'
+  s.platform     = :ios, '7.0'
   s.source_files = 'AsyncImageView'
   s.requires_arc = true
 end

@@ -1,7 +1,7 @@
 //
 //  AsyncImageView.h
 //
-//  Version 1.5.1
+//  Version 1.6
 //
 //  Created by Nick Lockwood on 03/04/2011.
 //  Copyright (c) 2011 Charcoal Design
@@ -62,7 +62,17 @@ extern NSString *const AsyncImageErrorKey;
 - (void)cancelLoadingURL:(NSURL *)URL;
 - (void)cancelLoadingImagesForTarget:(id)target action:(SEL)action;
 - (void)cancelLoadingImagesForTarget:(id)target;
+
+/**
+ * Returns the most recent image URL assigned to the target for the given action.
+ * This is not necessarily the next image that will be assigned.
+ */
 - (NSURL *)URLForTarget:(id)target action:(SEL)action;
+
+/**
+ * Returns the most recent image URL assigned to the target.
+ * This is not necessarily the next image that will be assigned.
+ */
 - (NSURL *)URLForTarget:(id)target;
 
 @end

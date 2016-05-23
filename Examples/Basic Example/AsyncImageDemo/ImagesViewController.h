@@ -11,6 +11,6 @@
 
 @interface ImagesViewController : UITableViewController
 
-@property (nonatomic, strong) NSArray *imageURLs;
+@property (nonatomic, strong) NSArray<NSURL *> *imageURLs;
 
 @end

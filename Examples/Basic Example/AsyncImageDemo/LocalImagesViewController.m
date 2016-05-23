@@ -20,7 +20,7 @@
     NSMutableArray *URLs = [NSMutableArray array];
     for (NSString *path in imagePaths[@"Local"])
     {
-        NSString *fullPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:path];
+        NSString *fullPath = [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:path];
         [URLs addObject:[NSURL fileURLWithPath:fullPath]];
     }
     self.imageURLs = URLs;
