@@ -67,7 +67,7 @@ Version 1.6
 - Fixed warnings on latest Xcode
 - Moved documentation into the header file
 - Added nullability annotations
-- Added activityIndicatorTintColor
+- Added activityIndicatorColor
 - Now supports loading @3x images
 
 Version 1.5.1

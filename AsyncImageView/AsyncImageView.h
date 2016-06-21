@@ -255,13 +255,12 @@ extern NSString *const AsyncImageErrorKey;
  * that this value should bet set *before* setting the imageURL. Setting this
  * value when loading is already in progress will cause the spinner to disappear.
  */
-@property (nonatomic, assign) UIActivityIndicatorViewStyle activityIndicatorStyle;
+@property (nonatomic, assign) UIActivityIndicatorViewStyle activityIndicatorStyle __TVOS_PROHIBITED;
 
 /**
- * The tint color for the UIActivityIndicator. Defaults to nil (no tint).
+ * The color for the UIActivityIndicator. Defaults to light grey.
  */
-@property (nonatomic, strong, nullable) UIColor *activityIndicatorTintColor;
-
+@property (nonatomic, strong, nullable) UIColor *activityIndicatorColor;
 
 /**
  * The crossfade animation duration, in seconds. If value is greater than 0, the

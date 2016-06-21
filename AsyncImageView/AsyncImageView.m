@@ -603,8 +603,8 @@ NSString *const AsyncImageErrorKey = @"error";
 - (void)setUp
 {
 	self.showActivityIndicator = (self.image == nil);
-	self.activityIndicatorStyle = UIActivityIndicatorViewStyleGray;
-    self.activityIndicatorTintColor = nil;
+	self.activityIndicatorStyle = UIActivityIndicatorViewStyleWhite;
+    self.activityIndicatorColor = [UIColor lightGrayColor];
 	self.crossfadeDuration = 0.4;
 }
 
@@ -640,7 +640,7 @@ NSString *const AsyncImageErrorKey = @"error";
         if (self.activityView == nil)
         {
             self.activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:self.activityIndicatorStyle];
-            self.activityView.tintColor = self.activityIndicatorTintColor;
+            self.activityView.color = self.activityIndicatorColor;
             self.activityView.hidesWhenStopped = YES;
             self.activityView.center = CGPointMake(self.bounds.size.width / 2.0, self.bounds.size.height / 2.0);
             self.activityView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
@@ -657,10 +657,10 @@ NSString *const AsyncImageErrorKey = @"error";
 	self.activityView = nil;
 }
 
-- (void)setActivityIndicatorTintColor:(UIColor *)activityIndicatorTintColor
+- (void)setActivityIndicatorColor:(UIColor *)activityIndicatorColor
 {
-    _activityIndicatorTintColor = activityIndicatorTintColor;
-    self.activityView.tintColor = activityIndicatorTintColor;
+    _activityIndicatorColor = activityIndicatorColor;
+    self.activityView.color = activityIndicatorColor;
 }
 
 - (void)setImage:(UIImage *)image
