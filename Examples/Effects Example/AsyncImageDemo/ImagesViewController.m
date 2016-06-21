@@ -57,8 +57,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    
-#define IMAGE_VIEW_TAG 99
+    static const NSInteger IMAGE_VIEW_TAG = 99;
 	
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil)
@@ -97,7 +96,7 @@
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-    ImageViewController *viewController = [[ImageViewController alloc] initWithNibName:@"ImageViewController" bundle:nil];
+    ImageViewController *viewController = [[ImageViewController alloc] init];
     [viewController view]; // load view
     viewController.imageView.imageURL = [_imageURLs objectAtIndex:indexPath.row];
     viewController.title = [[[_imageURLs objectAtIndex:indexPath.row] path] lastPathComponent];
