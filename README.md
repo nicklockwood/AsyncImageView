@@ -42,7 +42,11 @@ AsyncImageView uses threading internally, but none of the AsyncImageView externa
 Installation
 --------------
 
-To use the AsyncImageView in an app, just drag the AsyncImageView class files into your project.
+Use [CocoaPods](http://cocoapods.org)
+
+    pod "AsyncImageView"
+
+…or simply drag the AsyncImageView class files into your project.
 
 
 Usage
